@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit {{ p_kode }} — Admin CERNA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F0EEEb; --surface: #FFFFFF; --border: #E5E0D8; --border-2: #D0C9BF;
+            --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90;
+            --ink: #1E1E1E; --ink-mid: #4A4845; --ink-muted: #8C8882; --ink-faint: #C8C4BE;
+            --amber: #B8860B; --amber-bg: #FEF3CD;
+            --red: #C0392B; --red-bg: #FDEDEC;
+            --radius-md: 12px; --radius-lg: 18px;
+            --shadow-sm: 0 1px 4px rgba(30,24,18,.06); --shadow-md: 0 4px 16px rgba(30,24,18,.08);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink-mid); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* SIDEBAR (sama seperti dashboard) */
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 230px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1.25rem; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-logo { display: flex; align-items: center; gap: 9px; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
+        .logo-mark { width: 28px; height: 28px; background: var(--sage); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .logo-mark svg { width: 15px; height: 15px; fill: white; }
+        .sidebar-sub { font-size: .72rem; color: var(--ink-faint); font-weight: 500; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2rem; padding-left: 37px; }
+        .nav-label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); padding: 0 .6rem; margin-bottom: .4rem; margin-top: 1rem; }
+        .nav-item { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; border-radius: 9px; font-size: .87rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; transition: all .15s; }
+        .nav-item:hover { background: var(--bg); color: var(--ink); }
+        .nav-item.active { background: var(--sage-light); color: var(--sage); font-weight: 600; }
+        .nav-item svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; flex-shrink: 0; }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem; }
+
+        /* MAIN */
+        .main { margin-left: 230px; padding: 2rem 2.5rem; }
+
+        /* BREADCRUMB */
+        .breadcrumb { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: var(--ink-muted); margin-bottom: 1.5rem; }
+        .breadcrumb a { color: var(--ink-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--sage); }
+        .breadcrumb span { color: var(--ink-faint); }
+
+        /* LAYOUT */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .card-header h3 { font-size: 1rem; font-weight: 600; color: var(--ink); }
+        .card-body { padding: 1.5rem; }
+
+        /* FORM FIELDS */
+        .field { margin-bottom: 1rem; }
+        .field label { display: block; font-size: .78rem; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem; }
+        .field input, .field select, .field textarea {
+            width: 100%; padding: .65rem .9rem; font-family: 'Outfit', sans-serif; font-size: .88rem;
+            border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg);
+            color: var(--ink); outline: none; transition: border-color .2s;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--sage); background: var(--surface); }
+        .field textarea { min-height: 90px; resize: vertical; }
+        .save-row { display: flex; justify-content: flex-end; }
+        .btn-save { padding: .65rem 1.4rem; border-radius: var(--radius-md); border: none; background: var(--sage); color: white; font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+        .btn-save:hover { background: var(--sage-mid); }
+        .btn-ghost { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; font-family: 'Outfit', sans-serif; font-size: .85rem; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: all .15s; }
+        .btn-ghost:hover { background: var(--bg); }
+        .btn-danger { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid rgba(192,57,43,.3); background: transparent; font-family: 'Outfit', sans-serif; font-size: .85rem; font-weight: 500; color: var(--red); cursor: pointer; transition: all .15s; }
+        .btn-danger:hover { background: var(--red-bg); }
+        .btn-sm { padding: 4px 10px; font-size: .78rem; border-radius: 7px; }
+
+        /* GEJALA TABLE */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); padding: .6rem 1rem; background: var(--bg); border-bottom: 1px solid var(--border); }
+        td { padding: .8rem 1rem; border-bottom: 1px solid var(--border); font-size: .86rem; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+
+        /* CF BAR */
+        .cf-inline { display: flex; align-items: center; gap: .6rem; }
+        .cf-mini-track { flex: 1; height: 5px; background: var(--border); border-radius: 5px; overflow: hidden; }
+        .cf-mini-fill { height: 100%; background: var(--sage); border-radius: 5px; }
+        .cf-num { font-size: .82rem; font-weight: 700; color: var(--ink); min-width: 32px; text-align: right; }
+
+        /* EDITABLE INPUT */
+        .inline-edit { display: none; gap: .4rem; align-items: center; }
+        .inline-edit input { flex: 1; padding: 4px 8px; font-size: .84rem; border: 1.5px solid var(--sage); border-radius: 7px; background: var(--surface); font-family: 'Outfit', sans-serif; outline: none; }
+        .inline-edit .btn-ok { padding: 4px 10px; background: var(--sage); color: white; border: none; border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .inline-edit .btn-cancel-e { padding: 4px 8px; background: transparent; border: 1px solid var(--border); border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: 'Outfit', sans-serif; color: var(--ink-muted); }
+
+        .display-row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+        .gejala-nama { flex: 1; }
+        .gejala-actions { display: flex; gap: .4rem; opacity: 0; transition: opacity .15s; }
+        tr:hover .gejala-actions { opacity: 1; }
+        .btn-edit-g { padding: 3px 9px; font-size: .74rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-muted); cursor: pointer; font-family: 'Outfit', sans-serif; transition: all .15s; }
+        .btn-edit-g:hover { background: var(--sage-light); color: var(--sage); border-color: var(--sage); }
+        .btn-del-g { padding: 3px 9px; font-size: .74rem; border-radius: 6px; border: 1px solid rgba(192,57,43,.2); background: transparent; color: var(--red); cursor: pointer; font-family: 'Outfit', sans-serif; }
+        .btn-del-g:hover { background: var(--red-bg); }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(30,24,18,.35); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(30,24,18,.15); animation: popIn .25s cubic-bezier(.16,1,.3,1); }
+        @keyframes popIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+        .modal h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--ink); margin-bottom: 1.25rem; }
+        .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+        .btn-cancel { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; font-family: 'Outfit', sans-serif; font-size: .88rem; color: var(--ink-mid); cursor: pointer; }
+
+        /* TOAST */
+        .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--ink); color: white; font-size: .85rem; padding: .75rem 1.25rem; border-radius: var(--radius-md); opacity: 0; transform: translateY(10px); transition: all .3s; z-index: 999; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: var(--sage); }
+        .toast.error { background: var(--red); }
+
+        /* CF RANGE INPUT */
+        .cf-range-row { display: flex; align-items: center; gap: 1rem; }
+        .cf-range-row input[type=range] { flex: 1; accent-color: var(--sage); }
+        .cf-range-display { font-weight: 700; color: var(--sage); min-width: 36px; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .anim { animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div>
+        <div class="sidebar-logo">
+            <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg></div>
+            CERNA
+        </div>
+        <div class="sidebar-sub">Panel Admin</div>
+        <div class="nav-label">Menu</div>
+        <a href="/admin" class="nav-item active">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </a>
+        <a href="/" target="_blank" class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Lihat Aplikasi
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/admin/logout" class="nav-item" style="color:var(--red);">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="breadcrumb">
+        <a href="/admin">Dashboard</a>
+        <span>/</span>
+        <span>{{ p_kode }}</span>
+        <span>/</span>
+        <span>{{ p_data.nama_penyakit }}</span>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;" class="anim">
+        <div>
+            <h1 style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--ink);">{{ p_data.nama_penyakit }}</h1>
+            <p style="font-size:.85rem; color:var(--ink-muted);">Kode: <strong style="color:var(--sage);">{{ p_kode }}</strong> &middot; Kategori: {{ kategori.get(p_data.kategori, {}).get('label', p_data.kategori) }}</p>
+        </div>
+        <a href="/admin" class="btn-ghost">← Kembali</a>
+    </div>
+
+    <!-- INFO DASAR -->
+    <div class="two-col anim">
+        <div class="card">
+            <div class="card-header"><h3>Informasi Dasar</h3></div>
+            <div class="card-body">
+                <div class="field">
+                    <label>Nama Penyakit</label>
+                    <input type="text" id="edit-nama" value="{{ p_data.nama_penyakit }}">
+                </div>
+                <div class="field">
+                    <label>Kategori</label>
+                    <select id="edit-kategori">
+                        {% for k_id, k_data in kategori.items() %}
+                        <option value="{{ k_id }}" {% if k_id == p_data.kategori %}selected{% endif %}>{{ k_data.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Tingkat Urgensi</label>
+                    <select id="edit-urgensi">
+                        <option value="low"      {% if p_data.rekomendasi.urgensi == 'low' %}selected{% endif %}>Low</option>
+                        <option value="medium"   {% if p_data.rekomendasi.urgensi == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="high"     {% if p_data.rekomendasi.urgensi == 'high' %}selected{% endif %}>High</option>
+                        <option value="critical" {% if p_data.rekomendasi.urgensi == 'critical' %}selected{% endif %}>Critical</option>
+                    </select>
+                </div>
+                <div class="save-row">
+                    <button class="btn-save" onclick="simpanInfoDasar()">Simpan Perubahan</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h3>Deskripsi & Rekomendasi</h3></div>
+            <div class="card-body">
+                <div class="field">
+                    <label>Deskripsi Kondisi</label>
+                    <textarea id="edit-deskripsi">{{ p_data.deskripsi }}</textarea>
+                </div>
+                <div class="field">
+                    <label>Rekomendasi Ringkas</label>
+                    <input type="text" id="edit-reko-ringkas" value="{{ p_data.rekomendasi.ringkas }}">
+                </div>
+                <div class="save-row">
+                    <button class="btn-save" onclick="simpanDeskripsi()">Simpan Perubahan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GEJALA TABLE -->
+    <div class="card anim">
+        <div class="card-header">
+            <h3>Daftar Gejala ({{ p_data.gejala|length }} gejala)</h3>
+            <button class="btn-save btn-sm" onclick="openModal('modal-tambah-gejala')">+ Tambah Gejala</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="80">Kode</th>
+                    <th>Nama Gejala</th>
+                    <th width="200">CF Pakar</th>
+                    <th width="120">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="gejala-tbody">
+                {% for g_kode, g_data in p_data.gejala.items() %}
+                <tr id="grow-{{ g_kode }}">
+                    <td><code style="font-size:.79rem; color:var(--sage); background:var(--sage-light); padding:2px 7px; border-radius:5px;">{{ g_kode }}</code></td>
+                    <td>
+                        <!-- DISPLAY MODE -->
+                        <div class="display-row" id="display-{{ g_kode }}">
+                            <span class="gejala-nama" id="nama-text-{{ g_kode }}">{{ g_data.nama }}</span>
+                        </div>
+                        <!-- EDIT MODE (nama) -->
+                        <div class="inline-edit" id="edit-nama-{{ g_kode }}">
+                            <input type="text" id="input-nama-{{ g_kode }}" value="{{ g_data.nama }}">
+                            <button class="btn-ok" onclick="simpanNamaGejala('{{ p_kode }}', '{{ g_kode }}')">✓</button>
+                            <button class="btn-cancel-e" onclick="cancelEditNama('{{ g_kode }}')">✕</button>
+                        </div>
+                    </td>
+                    <td>
+                        <!-- DISPLAY MODE CF -->
+                        <div class="cf-inline" id="display-cf-{{ g_kode }}">
+                            <div class="cf-mini-track"><div class="cf-mini-fill" style="width:{{ (g_data.cf_pakar * 100)|round(0) }}%"></div></div>
+                            <span class="cf-num" id="cf-text-{{ g_kode }}">{{ g_data.cf_pakar }}</span>
+                        </div>
+                        <!-- EDIT MODE CF -->
+                        <div class="inline-edit" id="edit-cf-{{ g_kode }}" style="flex-direction:column; gap:.3rem;">
+                            <div class="cf-range-row">
+                                <input type="range" min="0" max="1" step="0.01" id="range-cf-{{ g_kode }}" value="{{ g_data.cf_pakar }}"
+                                    oninput="document.getElementById('disp-cf-{{ g_kode }}').textContent=parseFloat(this.value).toFixed(2)">
+                                <span class="cf-range-display" id="disp-cf-{{ g_kode }}">{{ g_data.cf_pakar }}</span>
+                            </div>
+                            <div style="display:flex; gap:.4rem;">
+                                <button class="btn-ok" onclick="simpanCFGejala('{{ p_kode }}', '{{ g_kode }}')">✓ Simpan</button>
+                                <button class="btn-cancel-e" onclick="cancelEditCF('{{ g_kode }}')">✕</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:.4rem; flex-wrap:wrap;">
+                            <button class="btn-edit-g" onclick="startEditNama('{{ g_kode }}')">✏ Nama</button>
+                            <button class="btn-edit-g" onclick="startEditCF('{{ g_kode }}')">⚙ CF</button>
+                            <button class="btn-del-g" onclick="hapusGejala('{{ p_kode }}', '{{ g_kode }}')">✕</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- MODAL: TAMBAH GEJALA -->
+<div class="modal-overlay" id="modal-tambah-gejala">
+    <div class="modal">
+        <h3>Tambah Gejala Baru</h3>
+        <div class="field">
+            <label>Kode Gejala <small style="color:var(--ink-faint)">(contoh: G76)</small></label>
+            <input type="text" id="new-g-kode" placeholder="G76" maxlength="10">
+        </div>
+        <div class="field">
+            <label>Nama / Deskripsi Gejala</label>
+            <input type="text" id="new-g-nama" placeholder="Contoh: Sering merasa lelah tanpa sebab">
+        </div>
+        <div class="field">
+            <label>Nilai CF Pakar: <span id="new-cf-disp" style="color:var(--sage); font-weight:700;">0.80</span></label>
+            <div class="cf-range-row">
+                <input type="range" min="0" max="1" step="0.01" id="new-g-cf" value="0.80"
+                    oninput="document.getElementById('new-cf-disp').textContent=parseFloat(this.value).toFixed(2)">
+            </div>
+        </div>
+        <p style="font-size:.78rem; color:var(--ink-muted); margin-top:.25rem;">
+            CF Pakar = keyakinan pakar terhadap gejala ini. Biasanya antara 0.75–1.00.
+        </p>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('modal-tambah-gejala')">Batal</button>
+            <button class="btn-save" onclick="simpanGejalaBaru()">Tambah Gejala</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+    const P_KODE = "{{ p_kode }}";
+
+    // ── MODAL
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+    });
+
+    // ── TOAST
+    function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + type;
+        setTimeout(() => { t.className = 'toast'; }, 3000);
+    }
+
+    // ── SIMPAN INFO DASAR
+    async function simpanInfoDasar() {
+        const res = await fetch(`/admin/api/penyakit/${P_KODE}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nama_penyakit: document.getElementById('edit-nama').value,
+                kategori: document.getElementById('edit-kategori').value,
+                urgensi: document.getElementById('edit-urgensi').value,
+            })
+        });
+        const data = await res.json();
+        if (data.error) { showToast(data.error, 'error'); return; }
+        showToast('✓ Informasi dasar disimpan');
+    }
+
+    // ── SIMPAN DESKRIPSI
+    async function simpanDeskripsi() {
+        const res = await fetch(`/admin/api/penyakit/${P_KODE}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                deskripsi: document.getElementById('edit-deskripsi').value,
+                rekomendasi_ringkas: document.getElementById('edit-reko-ringkas').value,
+            })
+        });
+        const data = await res.json();
+        if (data.error) { showToast(data.error, 'error'); return; }
+        showToast('✓ Deskripsi disimpan');
+    }
+
+    // ── EDIT NAMA GEJALA
+    function startEditNama(gKode) {
+        document.getElementById(`display-${gKode}`).style.display = 'none';
+        document.getElementById(`edit-nama-${gKode}`).style.display = 'flex';
+        document.getElementById(`input-nama-${gKode}`).focus();
+    }
+    function cancelEditNama(gKode) {
+        document.getElementById(`display-${gKode}`).style.display = 'flex';
+        document.getElementById(`edit-nama-${gKode}`).style.display = 'none';
+    }
+    async function simpanNamaGejala(pKode, gKode) {
+        const nama = document.getElementById(`input-nama-${gKode}`).value.trim();
+        if (!nama) { showToast('Nama tidak boleh kosong', 'error'); return; }
+        const res = await fetch(`/admin/api/penyakit/${pKode}/gejala/${gKode}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nama })
+        });
+        const data = await res.json();
+        if (data.error) { showToast(data.error, 'error'); return; }
+        document.getElementById(`nama-text-${gKode}`).textContent = nama;
+        cancelEditNama(gKode);
+        showToast('✓ Nama gejala diperbarui');
+    }
+
+    // ── EDIT CF GEJALA
+    function startEditCF(gKode) {
+        document.getElementById(`display-cf-${gKode}`).style.display = 'none';
+        const editEl = document.getElementById(`edit-cf-${gKode}`);
+        editEl.style.display = 'flex';
+    }
+    function cancelEditCF(gKode) {
+        document.getElementById(`display-cf-${gKode}`).style.display = 'flex';
+        document.getElementById(`edit-cf-${gKode}`).style.display = 'none';
+    }
+    async function simpanCFGejala(pKode, gKode) {
+        const cf = parseFloat(document.getElementById(`range-cf-${gKode}`).value);
+        const res = await fetch(`/admin/api/penyakit/${pKode}/gejala/${gKode}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cf_pakar: cf })
+        });
+        const data = await res.json();
+        if (data.error) { showToast(data.error, 'error'); return; }
+        // Update display
+        document.getElementById(`cf-text-${gKode}`).textContent = cf.toFixed(2);
+        const fill = document.querySelector(`#display-cf-${gKode} .cf-mini-fill`);
+        if (fill) fill.style.width = (cf * 100) + '%';
+        cancelEditCF(gKode);
+        showToast('✓ Nilai CF diperbarui');
+    }
+
+    // ── TAMBAH GEJALA BARU
+    async function simpanGejalaBaru() {
+        const kode = document.getElementById('new-g-kode').value.trim().toUpperCase();
+        const nama = document.getElementById('new-g-nama').value.trim();
+        const cf = parseFloat(document.getElementById('new-g-cf').value);
+
+        if (!kode || !nama) { showToast('Kode dan nama wajib diisi', 'error'); return; }
+
+        const res = await fetch(`/admin/api/penyakit/${P_KODE}/gejala`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ kode, nama, cf_pakar: cf })
+        });
+        const data = await res.json();
+        if (data.error) { showToast(data.error, 'error'); return; }
+
+        // Tambah baris baru ke tabel
+        const tbody = document.getElementById('gejala-tbody');
+        const pct = Math.round(cf * 100);
+        tbody.insertAdjacentHTML('beforeend', `
+            <tr id="grow-${kode}">
+                <td><code style="font-size:.79rem; color:var(--sage); background:var(--sage-light); padding:2px 7px; border-radius:5px;">${kode}</code></td>
+                <td>
+                    <div class="display-row" id="display-${kode}">
+                        <span class="gejala-nama" id="nama-text-${kode}">${nama}</span>
+                    </div>
+                    <div class="inline-edit" id="edit-nama-${kode}">
+                        <input type="text" id="input-nama-${kode}" value="${nama}">
+                        <button class="btn-ok" onclick="simpanNamaGejala('${P_KODE}','${kode}')">✓</button>
+                        <button class="btn-cancel-e" onclick="cancelEditNama('${kode}')">✕</button>
+                    </div>
+                </td>
+                <td>
+                    <div class="cf-inline" id="display-cf-${kode}">
+                        <div class="cf-mini-track"><div class="cf-mini-fill" style="width:${pct}%"></div></div>
+                        <span class="cf-num" id="cf-text-${kode}">${cf.toFixed(2)}</span>
+                    </div>
+                    <div class="inline-edit" id="edit-cf-${kode}" style="flex-direction:column; gap:.3rem;">
+                        <div class="cf-range-row">
+                            <input type="range" min="0" max="1" step="0.01" id="range-cf-${kode}" value="${cf}"
+                                oninput="document.getElementById('disp-cf-${kode}').textContent=parseFloat(this.value).toFixed(2)">
+                            <span class="cf-range-display" id="disp-cf-${kode}">${cf.toFixed(2)}</span>
+                        </div>
+                        <div style="display:flex; gap:.4rem;">
+                            <button class="btn-ok" onclick="simpanCFGejala('${P_KODE}','${kode}')">✓ Simpan</button>
+                            <button class="btn-cancel-e" onclick="cancelEditCF('${kode}')">✕</button>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div style="display:flex; gap:.4rem; flex-wrap:wrap;">
+                        <button class="btn-edit-g" onclick="startEditNama('${kode}')">✏ Nama</button>
+                        <button class="btn-edit-g" onclick="startEditCF('${kode}')">⚙ CF</button>
+                        <button class="btn-del-g" onclick="hapusGejala('${P_KODE}','${kode}')">✕</button>
+                    </div>
+                </td>
+            </tr>
+        `);
+
+        closeModal('modal-tambah-gejala');
+        document.getElementById('new-g-kode').value = '';
+        document.getElementById('new-g-nama').value = '';
+        document.getElementById('new-g-cf').value = '0.80';
+        document.getElementById('new-cf-disp').textContent = '0.80';
+        showToast(`✓ Gejala ${kode} berhasil ditambahkan`);
+    }
+
+    // ── HAPUS GEJALA
+    async function hapusGejala(pKode, gKode) {
+        if (!confirm(`Hapus gejala ${gKode}?`)) return;
+        const res = await fetch(`/admin/api/penyakit/${pKode}/gejala/${gKode}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.error) { showToast(data.error, 'error'); return; }
+        document.getElementById(`grow-${gKode}`)?.remove();
+        showToast(`✓ Gejala ${gKode} dihapus`);
+    }
+</script>
+</body>
+</html>

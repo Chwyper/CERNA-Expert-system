@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesmen — {{ kategori_info.label }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F7F5F2; --surface: #FFFFFF; --border: #E5E0D8;
+            --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90;
+            --ink: #1E1E1E; --ink-mid: #4A4845; --ink-muted: #8C8882; --ink-faint: #C8C4BE;
+            --amber: #B8860B; --amber-bg: #FEF3CD;
+            --rose: #C0545A; --rose-bg: #FDECEC;
+            --purple: #7C5CBF; --purple-bg: #F0EBF8;
+            --blue: #3A6EA5; --blue-bg: #E8F0F9;
+            --orange: #C4714F; --orange-bg: #FBF0EB;
+            --red: #C0392B; --red-bg: #FDEDEC;
+            --radius-md: 14px; --radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(30,24,18,.06); --shadow-md: 0 6px 24px rgba(30,24,18,.08);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink-mid); line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+
+        header { position: sticky; top: 0; z-index: 200; background: rgba(247,245,242,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--ink); text-decoration: none; }
+        .logo-mark { width: 30px; height: 30px; background: var(--sage); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+        .logo-mark svg { width: 16px; height: 16px; fill: white; }
+        .back-btn { font-size: 0.85rem; color: var(--ink-muted); text-decoration: none; display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); transition: all .2s; }
+        .back-btn:hover { background: var(--surface); color: var(--ink); }
+
+        .container { max-width: 700px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* SECTIONS */
+        #intro-section, #form-section, #loading-section, #results-section { display: none; }
+
+        /* INTRO */
+        .intro-wrap { padding: 3rem 0 2rem; }
+        .kat-eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.5rem; }
+        .intro-wrap h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 600; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1rem; }
+        .intro-wrap > p { font-size: 1rem; color: var(--ink-muted); line-height: 1.75; font-weight: 300; margin-bottom: 2rem; }
+
+        /* PENYAKIT INFO CARDS */
+        .penyakit-grid { display: grid; grid-template-columns: 1fr; gap: .75rem; margin-bottom: 2rem; }
+        .penyakit-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; cursor: pointer; transition: all .2s; }
+        .penyakit-card:hover { border-color: var(--sage); }
+        .penyakit-card-top { display: flex; align-items: center; justify-content: space-between; }
+        .penyakit-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+        .penyakit-card-kode { font-size: 0.75rem; color: var(--ink-faint); font-weight: 500; }
+        .penyakit-desc { font-size: 0.84rem; color: var(--ink-muted); line-height: 1.6; margin-top: .6rem; display: none; }
+        .penyakit-card.expanded .penyakit-desc { display: block; }
+        .toggle-icon { font-size: 1.1rem; color: var(--ink-faint); transition: transform .2s; }
+        .penyakit-card.expanded .toggle-icon { transform: rotate(180deg); }
+
+        .info-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+        .info-chip { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--ink-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; }
+        .info-chip span { font-weight: 600; color: var(--ink); }
+
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--sage); color: white; border: none; border-radius: var(--radius-md); padding: .85rem 2rem; font-size: .95rem; font-family: 'Outfit', sans-serif; font-weight: 500; cursor: pointer; transition: all .2s; text-decoration: none; }
+        .btn-primary:hover { background: var(--sage-mid); transform: translateY(-1px); }
+        .btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--ink-mid); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: .7rem 1.4rem; font-size: .88rem; font-family: 'Outfit', sans-serif; font-weight: 500; cursor: pointer; transition: all .2s; }
+        .btn-ghost:hover { background: var(--surface); border-color: var(--ink-faint); }
+        .btn-sm { padding: .55rem 1.1rem; font-size: .82rem; }
+
+        /* PROGRESS */
+        .progress-wrap { padding: 1.5rem 0 1rem; }
+        .progress-meta { display: flex; justify-content: space-between; margin-bottom: .5rem; font-size: .8rem; color: var(--ink-muted); font-weight: 500; }
+        .progress-track { height: 4px; background: var(--border); border-radius: 4px; }
+        .progress-fill { height: 100%; background: var(--sage); border-radius: 4px; transition: width .4s cubic-bezier(.16,1,.3,1); }
+
+        /* QUESTION CARD */
+        .question-card { display: none; }
+        .question-card.active { display: block; animation: slideQ .35s cubic-bezier(.16,1,.3,1); }
+        @keyframes slideQ { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .question-num { font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .75rem; }
+        .question-text { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); line-height: 1.35; margin-bottom: 1.5rem; }
+        .question-text em { color: var(--sage); font-style: italic; }
+
+        .options-list { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 2rem; }
+        .option-label { display: flex; align-items: center; gap: 1rem; padding: .9rem 1.1rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: all .18s; }
+        .option-label:hover { border-color: var(--sage-mid); }
+        .option-label.selected { border-color: var(--sage); background: var(--sage-light); }
+        .option-label input { display: none; }
+        .option-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; transition: all .15s; background: var(--bg); }
+        .option-label.selected .option-dot { background: var(--sage); border-color: var(--sage); box-shadow: 0 0 0 3px rgba(74,124,111,.15); }
+        .option-content { flex: 1; }
+        .option-title { display: block; font-size: .9rem; font-weight: 500; color: var(--ink); }
+        .option-sub { display: block; font-size: .78rem; color: var(--ink-muted); margin-top: 1px; }
+
+        .question-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+
+        /* LOADING */
+        .loading-wrap { text-align: center; padding: 5rem 2rem; }
+        .loader { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--sage); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1.5rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-wrap h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: .5rem; }
+        .loading-wrap p { font-size: .88rem; color: var(--ink-muted); }
+
+        /* RESULTS */
+        .results-header { display: flex; align-items: center; justify-content: space-between; padding: 2rem 0 1.5rem; gap: 1rem; flex-wrap: wrap; }
+        .results-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; color: var(--ink); }
+        .result-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; }
+        .result-card.dominant { border-color: var(--sage); }
+        .result-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .result-tag { display: inline-block; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 3px 9px; border-radius: 8px; margin-bottom: .4rem; }
+        .tag-dominant { background: var(--sage-light); color: var(--sage); }
+        .tag-other { background: var(--bg); color: var(--ink-muted); border: 1px solid var(--border); }
+        .result-name { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+        .result-code { font-size: .75rem; color: var(--ink-faint); margin-top: 2px; }
+        .level-badge { font-size: .72rem; font-weight: 600; padding: 4px 10px; border-radius: 8px; white-space: nowrap; }
+        .level-badge.high { background: var(--red-bg); color: var(--red); }
+        .level-badge.medium { background: var(--amber-bg); color: var(--amber); }
+        .level-badge.low { background: var(--sage-light); color: var(--sage); }
+
+        /* DESKRIPSI PENYAKIT DI HASIL */
+        .result-desc { font-size: .85rem; color: var(--ink-muted); line-height: 1.65; background: var(--bg); border-radius: 10px; padding: .9rem 1rem; margin-bottom: 1rem; }
+
+        .cf-row { display: flex; justify-content: space-between; font-size: .82rem; margin-bottom: .35rem; }
+        .cf-label { color: var(--ink-muted); }
+        .cf-value { font-weight: 700; color: var(--ink); }
+        .cf-track { height: 6px; background: var(--bg); border-radius: 6px; margin-bottom: 1rem; overflow: hidden; }
+        .cf-fill { height: 100%; width: 0; border-radius: 6px; transition: width .7s cubic-bezier(.16,1,.3,1) .2s; }
+        .cf-fill.high { background: var(--red); } .cf-fill.medium { background: var(--amber); } .cf-fill.low { background: var(--sage); }
+
+        .symptom-stat { font-size: .82rem; color: var(--ink-muted); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .pip-row { display: flex; gap: 3px; flex-wrap: wrap; }
+        .pip { width: 10px; height: 10px; border-radius: 3px; background: var(--border); }
+        .pip.matched { background: var(--sage); }
+
+        /* REKOMENDASI DETAIL */
+        .reco-section { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: .5rem; }
+        .reco-label { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--sage); margin-bottom: .6rem; }
+        .reco-detail { list-style: none; display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+        .reco-detail li { display: flex; gap: .5rem; font-size: .83rem; color: var(--ink-mid); line-height: 1.55; }
+        .reco-detail li::before { content: '•'; color: var(--sage); font-weight: 700; flex-shrink: 0; margin-top: .1rem; }
+
+        .hubungi-grid { display: flex; flex-direction: column; gap: .6rem; }
+        .hubungi-item { background: var(--bg); border-radius: 10px; padding: .8rem 1rem; }
+        .hubungi-siapa { font-size: .85rem; font-weight: 600; color: var(--ink); margin-bottom: .2rem; }
+        .hubungi-alasan { font-size: .8rem; color: var(--ink-muted); line-height: 1.5; }
+        .urgency-critical .hubungi-item:first-child { background: var(--red-bg); border: 1px solid rgba(192,57,43,.2); }
+        .urgency-critical .hubungi-item:first-child .hubungi-siapa { color: var(--red); }
+
+        .disclaimer { background: var(--amber-bg); border: 1px solid rgba(184,134,11,.2); border-radius: var(--radius-md); padding: 1rem 1.25rem; font-size: .83rem; color: var(--ink-mid); line-height: 1.6; margin: 1.5rem 0 3rem; }
+        .empty-state { text-align: center; padding: 4rem 2rem; }
+        .empty-icon { width: 56px; height: 56px; background: var(--sage-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
+        .empty-icon svg { width: 28px; height: 28px; stroke: var(--sage); stroke-width: 1.8; fill: none; }
+        .empty-state h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--ink); margin-bottom: .5rem; }
+        .empty-state p { font-size: .9rem; color: var(--ink-muted); max-width: 400px; margin: 0 auto; line-height: 1.65; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .anim { animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">
+            <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg></div>
+            CERNA
+        </a>
+        <a href="/" class="back-btn">← Kembali ke Kategori</a>
+    </header>
+
+    <div class="container">
+
+        <!-- ══ INTRO ══ -->
+        <section id="intro-section">
+            <div class="intro-wrap anim">
+                {% set warna_map = {'amber': '#B8860B','rose':'#C0545A','purple':'#7C5CBF','blue':'#3A6EA5','orange':'#C4714F','red':'#C0392B','sage':'#4A7C6F'} %}
+                {% set warna_bg_map = {'amber': '#FEF3CD','rose':'#FDECEC','purple':'#F0EBF8','blue':'#E8F0F9','orange':'#FBF0EB','red':'#FDEDEC','sage':'#EBF4F1'} %}
+                {% set w = kategori_info.warna %}
+                <div class="kat-eyebrow" style="color: {{ warna_map.get(w,'#4A7C6F') }}; background: {{ warna_bg_map.get(w,'#EBF4F1') }};">
+                    Kategori: {{ kategori_info.label }}
+                </div>
+                <h1>{{ kategori_info.label }}</h1>
+                <p>{{ kategori_info.deskripsi }}</p>
+
+                <!-- Info kondisi yang akan didiagnosis -->
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size:.85rem; font-weight:600; color:var(--ink); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.05em;">Kondisi yang akan dianalisis:</p>
+                    <div class="penyakit-grid">
+                        {% for p in penyakit_info %}
+                        <div class="penyakit-card" onclick="togglePenyakit(this)">
+                            <div class="penyakit-card-top">
+                                <h4>{{ p.nama }}</h4>
+                                <span class="toggle-icon">▾</span>
+                            </div>
+                            <div class="penyakit-desc">{{ p.deskripsi }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="info-meta">
+                    <div class="info-chip">📋 <span>{{ gejala|length }}</span> pertanyaan gejala</div>
+                    <div class="info-chip">🔬 <span>{{ penyakit_info|length }}</span> diagnosis yang dianalisis</div>
+                    <div class="info-chip">⏱ sekitar <span>5–10</span> menit</div>
+                </div>
+
+                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                    <button class="btn-primary" onclick="startScreening()">Mulai Asesmen →</button>
+                    <a href="/" class="btn-ghost">Pilih kategori lain</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ FORM ══ -->
+        <section id="form-section">
+            <div class="progress-wrap">
+                <div class="progress-meta">
+                    <span>Pertanyaan</span>
+                    <span id="progress-text">1 / {{ gejala|length }}</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <form id="diagnosa-form">
+                {% for g in gejala %}
+                <div class="question-card{% if loop.first %} active{% endif %}" data-index="{{ loop.index0 }}" data-kode="{{ g.kode }}">
+                    <div class="question-num">Pertanyaan {{ loop.index }} dari {{ gejala|length }}</div>
+                    <h2 class="question-text">Apakah Anda mengalami atau merasakan <em>{{ g.nama }}</em>?</h2>
+                    <div class="options-list">
+                        <label class="option-label" onclick="selectOption(this, '{{ g.kode }}', '0.0')">
+                            <input type="radio" name="{{ g.kode }}" value="0.0" checked>
+                            <div class="option-dot"></div>
+                            <div class="option-content">
+                                <span class="option-title">Tidak Mengalami</span>
+                                <span class="option-sub">Belum pernah atau tidak relevan sama sekali</span>
+                            </div>
+                        </label>
+                        <label class="option-label" onclick="selectOption(this, '{{ g.kode }}', '0.4')">
+                            <input type="radio" name="{{ g.kode }}" value="0.4">
+                            <div class="option-dot"></div>
+                            <div class="option-content">
+                                <span class="option-title">Sedikit Merasakan</span>
+                                <span class="option-sub">Sesekali terjadi, tidak terlalu mengganggu</span>
+                            </div>
+                        </label>
+                        <label class="option-label" onclick="selectOption(this, '{{ g.kode }}', '0.6')">
+                            <input type="radio" name="{{ g.kode }}" value="0.6">
+                            <div class="option-dot"></div>
+                            <div class="option-content">
+                                <span class="option-title">Cukup Merasakan</span>
+                                <span class="option-sub">Sering terjadi, mulai mengganggu aktivitas</span>
+                            </div>
+                        </label>
+                        <label class="option-label" onclick="selectOption(this, '{{ g.kode }}', '0.8')">
+                            <input type="radio" name="{{ g.kode }}" value="0.8">
+                            <div class="option-dot"></div>
+                            <div class="option-content">
+                                <span class="option-title">Sangat Merasakan</span>
+                                <span class="option-sub">Hampir setiap hari, cukup mengganggu</span>
+                            </div>
+                        </label>
+                        <label class="option-label" onclick="selectOption(this, '{{ g.kode }}', '1.0')">
+                            <input type="radio" name="{{ g.kode }}" value="1.0">
+                            <div class="option-dot"></div>
+                            <div class="option-content">
+                                <span class="option-title">Selalu Merasakan</span>
+                                <span class="option-sub">Terus-menerus, sangat mengganggu keseharian</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="question-nav">
+                        <button type="button" class="btn-ghost btn-sm" onclick="prevQuestion()" {% if loop.first %}style="visibility:hidden"{% endif %}>← Sebelumnya</button>
+                        {% if loop.last %}
+                        <button type="button" class="btn-primary btn-sm" onclick="submitData()">Lihat Hasil →</button>
+                        {% else %}
+                        <button type="button" class="btn-primary btn-sm" onclick="nextQuestion()">Selanjutnya →</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </form>
+        </section>
+
+        <!-- ══ LOADING ══ -->
+        <section id="loading-section">
+            <div class="loading-wrap">
+                <div class="loader"></div>
+                <h3>Menganalisis pola gejala...</h3>
+                <p>Menjalankan DFS inference engine dan menghitung Certainty Factor.</p>
+            </div>
+        </section>
+
+        <!-- ══ RESULTS ══ -->
+        <section id="results-section">
+            <div class="results-header">
+                <div>
+                    <h2>Laporan Asesmen</h2>
+                    <p style="font-size:.83rem; color:var(--ink-muted); margin-top:.3rem;">{{ kategori_info.label }} — berdasarkan gejala yang Anda laporkan</p>
+                </div>
+                <button class="btn-ghost btn-sm" onclick="resetToHome()">← Ulangi</button>
+            </div>
+            <div id="results-list"></div>
+            <div class="disclaimer">
+                ⚠️ Hasil ini adalah <strong>screening awal berbasis sistem pakar</strong> dan bukan diagnosis medis resmi. Jika Anda memerlukan bantuan, segera hubungi profesional kesehatan jiwa.
+            </div>
+            <div style="text-align:center; padding-bottom: 3rem;">
+                <a href="/" class="btn-ghost">← Kembali ke Halaman Utama</a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const totalQ = document.querySelectorAll('.question-card').length;
+        let currentIndex = 0;
+        let userAnswers = {};
+        const PENYAKIT_KODE_LIST = {{ penyakit_kode_list | safe }};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('intro-section').style.display = 'block';
+            updateProgress();
+            // Pre-select first option of each card
+            document.querySelectorAll('.question-card').forEach(card => {
+                const firstLabel = card.querySelector('.option-label');
+                if (firstLabel) firstLabel.classList.add('selected');
+            });
+        });
+
+        function togglePenyakit(el) {
+            el.classList.toggle('expanded');
+        }
+
+        function selectOption(labelEl, kode, val) {
+            const card = labelEl.closest('.question-card');
+            card.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+            labelEl.classList.add('selected');
+            userAnswers[kode] = val;
+        }
+
+        function updateProgress() {
+            const pct = ((currentIndex + 1) / totalQ) * 100;
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-text').textContent = (currentIndex + 1) + ' / ' + totalQ;
+        }
+
+        function showCard(index) {
+            document.querySelectorAll('.question-card').forEach((c, i) => {
+                c.classList.toggle('active', i === index);
+            });
+            currentIndex = index;
+            updateProgress();
+            window.scrollTo({ top: 60, behavior: 'smooth' });
+        }
+
+        function nextQuestion() { if (currentIndex < totalQ - 1) showCard(currentIndex + 1); }
+        function prevQuestion() { if (currentIndex > 0) showCard(currentIndex - 1); }
+
+        function startScreening() {
+            document.getElementById('intro-section').style.display = 'none';
+            document.getElementById('form-section').style.display = 'block';
+            showCard(0);
+        }
+
+        async function submitData() {
+            const form = document.getElementById('diagnosa-form');
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, val] of formData.entries()) data[key] = val;
+            Object.assign(data, userAnswers);
+            // Sertakan daftar kode penyakit yang dianalisis
+            data['__penyakit_kode_list'] = PENYAKIT_KODE_LIST;
+
+            document.getElementById('form-section').style.display = 'none';
+            document.getElementById('loading-section').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            try {
+                const res = await fetch('/diagnosa', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const results = await res.json();
+                setTimeout(() => {
+                    document.getElementById('loading-section').style.display = 'none';
+                    renderResults(results);
+                }, 1200);
+            } catch (err) {
+                alert('Gagal menghubungi server. Coba lagi.');
+                resetToHome();
+            }
+        }
+
+        function renderResults(results) {
+            const list = document.getElementById('results-list');
+            list.innerHTML = '';
+            const positive = results.filter(r => r.keyakinan > 0);
+
+            if (positive.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state anim">
+                        <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                        <h2>Tidak Ada Indikasi Klinis</h2>
+                        <p>Berdasarkan pola gejala, sistem tidak menemukan indikator signifikan pada kategori ini. Kondisi Anda tampak baik.</p>
+                    </div>`;
+            } else {
+                positive.sort((a, b) => b.keyakinan - a.keyakinan);
+                positive.forEach((res, idx) => {
+                    let level = 'low', levelLabel = 'Signifikansi Rendah';
+                    if (res.keyakinan >= 70) { level = 'high'; levelLabel = 'Signifikansi Tinggi'; }
+                    else if (res.keyakinan >= 40) { level = 'medium'; levelLabel = 'Signifikansi Sedang'; }
+
+                    const isDominant = idx === 0;
+                    const tagHtml = isDominant
+                        ? `<span class="result-tag tag-dominant">Kemungkinan Utama</span>`
+                        : `<span class="result-tag tag-other">Alternatif ${idx}</span>`;
+
+                    const pips = Array.from({ length: res.total_gejala }, (_, i) =>
+                        `<div class="pip${i < res.gejala_match ? ' matched' : ''}"></div>`
+                    ).join('');
+
+                    // Rekomendasi detail
+                    const rekoDetail = (res.rekomendasi.detail || [])
+                        .map(d => `<li>${d}</li>`).join('');
+                    const hubungiItems = (res.rekomendasi.hubungi || [])
+                        .map(h => `<div class="hubungi-item"><div class="hubungi-siapa">📞 ${h.siapa}</div><div class="hubungi-alasan">${h.alasan}</div></div>`)
+                        .join('');
+
+                    const urgencyClass = res.rekomendasi.urgensi === 'critical' ? 'urgency-critical' : '';
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="result-card ${isDominant ? 'dominant' : ''} anim">
+                            <div class="result-top">
+                                <div>
+                                    ${tagHtml}
+                                    <div class="result-name">${res.nama_penyakit}</div>
+                                    <div class="result-code">Kode: ${res.kode_penyakit}</div>
+                                </div>
+                                <span class="level-badge ${level}">${levelLabel}</span>
+                            </div>
+
+                            <div class="result-desc">${res.deskripsi}</div>
+
+                            <div class="cf-row">
+                                <span class="cf-label">Tingkat Keyakinan (CF)</span>
+                                <span class="cf-value">${res.keyakinan}%</span>
+                            </div>
+                            <div class="cf-track">
+                                <div class="cf-fill ${level}" data-target="${Math.min(res.keyakinan, 100)}"></div>
+                            </div>
+
+                            <div class="symptom-stat">
+                                Gejala cocok: <strong>${res.gejala_match} dari ${res.total_gejala}</strong>
+                                <div class="pip-row">${pips}</div>
+                            </div>
+
+                            <div class="reco-section ${urgencyClass}">
+                                <div class="reco-label">Langkah yang Disarankan</div>
+                                <ul class="reco-detail">${rekoDetail}</ul>
+                                <div class="reco-label">Hubungi Siapa?</div>
+                                <div class="hubungi-grid">${hubungiItems}</div>
+                            </div>
+                        </div>
+                    `);
+                });
+                setTimeout(() => {
+                    document.querySelectorAll('.cf-fill').forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-target') + '%';
+                    });
+                }, 200);
+            }
+
+            document.getElementById('results-section').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetToHome() {
+            ['form-section','loading-section','results-section'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            document.getElementById('intro-section').style.display = 'block';
+            document.getElementById('diagnosa-form').reset();
+            document.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+            document.querySelectorAll('.question-card').forEach((c, i) => {
+                c.classList.toggle('active', i === 0);
+                const firstLabel = c.querySelector('.option-label');
+                if (firstLabel) firstLabel.classList.add('selected');
+            });
+            currentIndex = 0;
+            userAnswers = {};
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
