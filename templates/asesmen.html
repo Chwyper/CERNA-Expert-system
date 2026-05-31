@@ -1,68 +1,29 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asesmen — {{ kategori_info.label }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #F7F5F2; --surface: #FFFFFF; --border: #E5E0D8;
-            --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90;
-            --ink: #1E1E1E; --ink-mid: #4A4845; --ink-muted: #8C8882; --ink-faint: #C8C4BE;
-            --amber: #B8860B; --amber-bg: #FEF3CD;
-            --rose: #C0545A; --rose-bg: #FDECEC;
-            --purple: #7C5CBF; --purple-bg: #F0EBF8;
-            --blue: #3A6EA5; --blue-bg: #E8F0F9;
-            --orange: #C4714F; --orange-bg: #FBF0EB;
-            --red: #C0392B; --red-bg: #FDEDEC;
-            --radius-md: 14px; --radius-lg: 20px;
-            --shadow-sm: 0 1px 3px rgba(30,24,18,.06); --shadow-md: 0 6px 24px rgba(30,24,18,.08);
-        }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink-mid); line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+{% extends 'base.html' %}
 
-        header { position: sticky; top: 0; z-index: 200; background: rgba(247,245,242,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; }
-        .logo { display: flex; align-items: center; gap: 10px; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--ink); text-decoration: none; }
-        .logo-mark { width: 30px; height: 30px; background: var(--sage); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
-        .logo-mark svg { width: 16px; height: 16px; fill: white; }
-        .back-btn { font-size: 0.85rem; color: var(--ink-muted); text-decoration: none; display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); transition: all .2s; }
-        .back-btn:hover { background: var(--surface); color: var(--ink); }
+{% block title %}Asesmen — {{ kategori_info.label }}{% endblock %}
 
+{% block header_right %}
+<a href="/asesmen_manual" class="btn-ghost btn-sm" style="font-size: 0.85rem; padding: 5px 12px; border: 1px solid var(--border);">← Kembali ke Kategori</a>
+{% endblock %}
+
+{% block style %}
+<style>
         .container { max-width: 700px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* SECTIONS */
         #intro-section, #form-section, #loading-section, #results-section { display: none; }
 
         /* INTRO */
-        .intro-wrap { padding: 3rem 0 2rem; }
+        .intro-wrap { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 3rem; box-shadow: var(--shadow-sm); margin-top: 1rem; margin-bottom: 2rem; }
         .kat-eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.5rem; }
-        .intro-wrap h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 600; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1rem; }
+        .intro-wrap h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 600; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1rem; }
         .intro-wrap > p { font-size: 1rem; color: var(--ink-muted); line-height: 1.75; font-weight: 300; margin-bottom: 2rem; }
-
-        /* PENYAKIT INFO CARDS */
-        .penyakit-grid { display: grid; grid-template-columns: 1fr; gap: .75rem; margin-bottom: 2rem; }
-        .penyakit-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; cursor: pointer; transition: all .2s; }
-        .penyakit-card:hover { border-color: var(--sage); }
-        .penyakit-card-top { display: flex; align-items: center; justify-content: space-between; }
-        .penyakit-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--ink); }
-        .penyakit-card-kode { font-size: 0.75rem; color: var(--ink-faint); font-weight: 500; }
-        .penyakit-desc { font-size: 0.84rem; color: var(--ink-muted); line-height: 1.6; margin-top: .6rem; display: none; }
-        .penyakit-card.expanded .penyakit-desc { display: block; }
-        .toggle-icon { font-size: 1.1rem; color: var(--ink-faint); transition: transform .2s; }
-        .penyakit-card.expanded .toggle-icon { transform: rotate(180deg); }
 
         .info-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
         .info-chip { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--ink-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; }
         .info-chip span { font-weight: 600; color: var(--ink); }
 
-        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--sage); color: white; border: none; border-radius: var(--radius-md); padding: .85rem 2rem; font-size: .95rem; font-family: 'Outfit', sans-serif; font-weight: 500; cursor: pointer; transition: all .2s; text-decoration: none; }
-        .btn-primary:hover { background: var(--sage-mid); transform: translateY(-1px); }
-        .btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--ink-mid); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: .7rem 1.4rem; font-size: .88rem; font-family: 'Outfit', sans-serif; font-weight: 500; cursor: pointer; transition: all .2s; }
-        .btn-ghost:hover { background: var(--surface); border-color: var(--ink-faint); }
-        .btn-sm { padding: .55rem 1.1rem; font-size: .82rem; }
+        /* Buttons inherited from base.html */
 
         /* PROGRESS */
         .progress-wrap { padding: 1.5rem 0 1rem; }
@@ -71,11 +32,11 @@
         .progress-fill { height: 100%; background: var(--sage); border-radius: 4px; transition: width .4s cubic-bezier(.16,1,.3,1); }
 
         /* QUESTION CARD */
-        .question-card { display: none; }
+        .question-card { display: none; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 3rem; box-shadow: var(--shadow-sm); margin-top: 1rem; margin-bottom: 2rem; }
         .question-card.active { display: block; animation: slideQ .35s cubic-bezier(.16,1,.3,1); }
         @keyframes slideQ { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
         .question-num { font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .75rem; }
-        .question-text { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); line-height: 1.35; margin-bottom: 1.5rem; }
+        .question-text { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); line-height: 1.35; margin-bottom: 1.5rem; }
         .question-text em { color: var(--sage); font-style: italic; }
 
         .options-list { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 2rem; }
@@ -92,15 +53,15 @@
         .question-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
 
         /* LOADING */
-        .loading-wrap { text-align: center; padding: 5rem 2rem; }
+        .loading-wrap { text-align: center; padding: 4rem 2rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-top: 1rem; margin-bottom: 2rem; }
         .loader { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--sage); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1.5rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-wrap h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: .5rem; }
+        .loading-wrap h3 { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: .5rem; }
         .loading-wrap p { font-size: .88rem; color: var(--ink-muted); }
 
         /* RESULTS */
         .results-header { display: flex; align-items: center; justify-content: space-between; padding: 2rem 0 1.5rem; gap: 1rem; flex-wrap: wrap; }
-        .results-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; color: var(--ink); }
+        .results-header h2 { font-family: 'Lora', serif; font-size: 1.8rem; font-weight: 600; color: var(--ink); }
         .result-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; }
         .result-card.dominant { border-color: var(--sage); }
         .result-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -147,55 +108,30 @@
         .empty-state { text-align: center; padding: 4rem 2rem; }
         .empty-icon { width: 56px; height: 56px; background: var(--sage-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
         .empty-icon svg { width: 28px; height: 28px; stroke: var(--sage); stroke-width: 1.8; fill: none; }
-        .empty-state h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--ink); margin-bottom: .5rem; }
+        .empty-state h2 { font-family: 'Lora', serif; font-size: 1.8rem; color: var(--ink); margin-bottom: .5rem; }
         .empty-state p { font-size: .9rem; color: var(--ink-muted); max-width: 400px; margin: 0 auto; line-height: 1.65; }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
         .anim { animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both; }
-    </style>
-</head>
-<body>
-    <header>
-        <a href="/" class="logo">
-            <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg></div>
-            CERNA
-        </a>
-        <a href="/" class="back-btn">← Kembali ke Kategori</a>
-    </header>
+        
+</style>
+{% endblock %}
 
-    <div class="container">
+{% block content %}
+    <div class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
 
         <!-- ══ INTRO ══ -->
         <section id="intro-section">
             <div class="intro-wrap anim">
-                {% set warna_map = {'amber': '#B8860B','rose':'#C0545A','purple':'#7C5CBF','blue':'#3A6EA5','orange':'#C4714F','red':'#C0392B','sage':'#4A7C6F'} %}
-                {% set warna_bg_map = {'amber': '#FEF3CD','rose':'#FDECEC','purple':'#F0EBF8','blue':'#E8F0F9','orange':'#FBF0EB','red':'#FDEDEC','sage':'#EBF4F1'} %}
-                {% set w = kategori_info.warna %}
-                <div class="kat-eyebrow" style="color: {{ warna_map.get(w,'#4A7C6F') }}; background: {{ warna_bg_map.get(w,'#EBF4F1') }};">
+                {% set w = kategori_info.warna | default('sage') %}
+                <div class="kat-eyebrow bg-{{ w }}">
                     Kategori: {{ kategori_info.label }}
                 </div>
                 <h1>{{ kategori_info.label }}</h1>
                 <p>{{ kategori_info.deskripsi }}</p>
 
-                <!-- Info kondisi yang akan didiagnosis -->
-                <div style="margin-bottom: 1.5rem;">
-                    <p style="font-size:.85rem; font-weight:600; color:var(--ink); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.05em;">Kondisi yang akan dianalisis:</p>
-                    <div class="penyakit-grid">
-                        {% for p in penyakit_info %}
-                        <div class="penyakit-card" onclick="togglePenyakit(this)">
-                            <div class="penyakit-card-top">
-                                <h4>{{ p.nama }}</h4>
-                                <span class="toggle-icon">▾</span>
-                            </div>
-                            <div class="penyakit-desc">{{ p.deskripsi }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
                 <div class="info-meta">
-                    <div class="info-chip">📋 <span>{{ gejala|length }}</span> pertanyaan gejala</div>
-                    <div class="info-chip">🔬 <span>{{ penyakit_info|length }}</span> diagnosis yang dianalisis</div>
+                    <div class="info-chip">📋 <span>{{ gejala|length }}</span> pertanyaan</div>
                     <div class="info-chip">⏱ sekitar <span>5–10</span> menit</div>
                 </div>
 
@@ -311,7 +247,7 @@
         const totalQ = document.querySelectorAll('.question-card').length;
         let currentIndex = 0;
         let userAnswers = {};
-        const PENYAKIT_KODE_LIST = {{ penyakit_kode_list | safe }};
+        const PENYAKIT_KODE_LIST = JSON.parse('{{ penyakit_kode_list | safe }}');
 
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('intro-section').style.display = 'block';
@@ -322,10 +258,6 @@
                 if (firstLabel) firstLabel.classList.add('selected');
             });
         });
-
-        function togglePenyakit(el) {
-            el.classList.toggle('expanded');
-        }
 
         function selectOption(labelEl, kode, val) {
             const card = labelEl.closest('.question-card');
@@ -489,5 +421,4 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
-</body>
-</html>
+{% endblock %}

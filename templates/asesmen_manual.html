@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<style>
+    .page-header { text-align: center; padding: 3.5rem 1.5rem 2.5rem; }
+    .page-header h1 { font-family: 'Lora', serif; font-size: 2rem; font-weight: 600; color: var(--ink); margin-bottom: .6rem; }
+    .page-header p { font-size: 1rem; color: var(--ink-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+    .kategori-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.25rem; max-width: 1000px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+
+    .kat-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; cursor: pointer; transition: all .25s cubic-bezier(.16,1,.3,1); position: relative; text-decoration: none; display: flex; flex-direction: column; }
+    .kat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--kat-color, var(--sage)); }
+    .kat-card:hover .kat-icon { background: var(--kat-bg, var(--sage-light)); }
+
+    .kat-card[data-warna="amber"] { --kat-color: var(--amber); --kat-bg: var(--amber-bg); }
+    .kat-card[data-warna="rose"]  { --kat-color: var(--rose);  --kat-bg: var(--rose-bg); }
+    .kat-card[data-warna="purple"]{ --kat-color: var(--purple); --kat-bg: var(--purple-bg); }
+    .kat-card[data-warna="blue"]  { --kat-color: var(--blue);  --kat-bg: var(--blue-bg); }
+    .kat-card[data-warna="orange"]{ --kat-color: var(--orange); --kat-bg: var(--orange-bg); }
+    .kat-card[data-warna="red"]   { --kat-color: var(--red);   --kat-bg: var(--red-bg); }
+    .kat-card[data-warna="sage"]  { --kat-color: var(--sage);  --kat-bg: var(--sage-light); }
+
+    .kat-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+    .kat-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; transition: background .25s; flex-shrink: 0; }
+    .kat-icon svg { width: 24px; height: 24px; stroke: var(--kat-color, var(--sage)); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    
+    .kat-info-chips { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+    .kat-chip { font-size: 0.72rem; font-weight: 500; color: var(--ink-muted); background: var(--bg); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+
+    .kat-card h3 { font-family: 'Lora', serif; font-size: 1.3rem; font-weight: 600; color: var(--ink); margin-bottom: .5rem; }
+    .kat-card p { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+
+    .kat-action { width: 100%; padding: .75rem; background: var(--kat-bg, var(--sage-light)); color: var(--kat-color, var(--sage)); border: none; border-radius: var(--radius-md); font-size: .9rem; font-family: 'Inter', sans-serif; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .2s; }
+    .kat-card:hover .kat-action { background: var(--kat-color, var(--sage)); color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header anim">
+    <h1>Pilih Kategori Asesmen Manual</h1>
+    <p>Setiap kategori mencakup kelompok gejala yang spesifik. Pilih kategori yang paling relevan dengan kondisi Anda saat ini.</p>
+</div>
+
+<div class="kategori-grid">
+    {% for kat in kategori_list %}
+    <a href="/asesmen/{{ kat.id }}" class="kat-card anim anim-d{{ loop.index if loop.index <= 6 else 6 }}" data-warna="{{ kat.warna | default('sage') }}">
+        <div class="kat-top">
+            <div class="kat-icon">
+                <svg viewBox="0 0 24 24"><path d="{{ kat.icon }}"/></svg>
+            </div>
+            <div class="kat-info-chips">
+                <span class="kat-chip">📋 {{ kat.jumlah_pertanyaan }} Pertanyaan</span>
+                <span class="kat-chip">⏱ {{ kat.perkiraan_waktu }}</span>
+            </div>
+        </div>
+        
+        <h3>{{ kat.label }}</h3>
+        <p>{{ kat.deskripsi }}</p>
+        
+        <div class="kat-action">Mulai Asesmen →</div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

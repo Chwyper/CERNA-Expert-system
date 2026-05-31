@@ -1,2 +1,6 @@
 .venv/
 /personal/
+/.vscode/
+/_context/
+update_layout.py
+fix_font.py

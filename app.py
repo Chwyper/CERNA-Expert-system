@@ -7,6 +7,7 @@ Enhanced Flask App:
   - Autentikasi admin sederhana via session
 """
 
+# pyrefly: ignore [missing-import]
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import json, os, copy
 
@@ -539,7 +540,7 @@ def jalankan_diagnosa(user_inputs, kode_penyakit_list=None):
 # ADMIN CREDENTIALS (ganti dengan hash di produksi)
 # ──────────────────────────────────────────────────────────────────────────────
 ADMIN_USER = "admin"
-ADMIN_PASS = "cerna2026"
+ADMIN_PASS = "admin123"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # ROUTES — PUBLIC
@@ -547,23 +548,39 @@ ADMIN_PASS = "cerna2026"
 
 @app.route("/")
 def index():
+    return render_template("index.html")
+
+@app.route("/pilih_metode")
+def pilih_metode():
+    return render_template("pilih_metode.html")
+
+@app.route("/asesmen_manual")
+def asesmen_manual():
     kategori_list = []
     for k_id, k_data in KATEGORI.items():
-        penyakit_dalam = [
-            {"kode": p_kode, "nama": p_data["nama_penyakit"]}
-            for p_kode, p_data in KNOWLEDGE_BASE.items()
-            if p_data["kategori"] == k_id
-        ]
+        gejala_unik = set()
+        penyakit_count = 0
+        for p_data in KNOWLEDGE_BASE.values():
+            if p_data["kategori"] == k_id:
+                penyakit_count += 1
+                for g_kode in p_data["gejala"]:
+                    gejala_unik.add(g_kode)
+        
+        jumlah_pertanyaan = len(gejala_unik)
+        waktu_menit = max(1, jumlah_pertanyaan // 4)
+        waktu_str = f"{waktu_menit} - {waktu_menit + 2} menit"
+        
         kategori_list.append({
             "id": k_id,
             "label": k_data["label"],
             "icon": k_data["icon"],
             "deskripsi": k_data["deskripsi"],
             "warna": k_data["warna"],
-            "penyakit": penyakit_dalam,
-            "jumlah": len(penyakit_dalam),
+            "jumlah_pertanyaan": jumlah_pertanyaan,
+            "perkiraan_waktu": waktu_str,
+            "jumlah_penyakit": penyakit_count,
         })
-    return render_template("index.html", kategori_list=kategori_list)
+    return render_template("asesmen_manual.html", kategori_list=kategori_list)
 
 
 @app.route("/asesmen/<kategori_id>")

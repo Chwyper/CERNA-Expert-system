@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<style>
+    .page-header { text-align: center; padding: 4rem 1.5rem 2.5rem; }
+    .page-header h1 { font-family: 'Lora', serif; font-size: 2.2rem; font-weight: 600; color: var(--ink); margin-bottom: .75rem; }
+    .page-header p { font-size: 1.05rem; color: var(--ink-muted); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+    .method-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; max-width: 800px; margin: 0 auto 5rem; padding: 0 1.5rem; }
+    
+    .method-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 2rem; text-align: center; cursor: pointer; transition: all .25s cubic-bezier(.16,1,.3,1); text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .method-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--sage); }
+    
+    .method-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+    .method-icon svg { width: 32px; height: 32px; stroke-width: 1.5; fill: none; }
+    
+    .icon-manual { background: var(--sage-light); }
+    .icon-manual svg { stroke: var(--sage); }
+    
+    .icon-nlp { background: var(--blue-bg); }
+    .icon-nlp svg { stroke: var(--blue); }
+
+    .method-card h3 { font-family: 'Lora', serif; font-size: 1.4rem; font-weight: 600; color: var(--ink); margin-bottom: .75rem; }
+    .method-card p { font-size: 0.95rem; color: var(--ink-muted); line-height: 1.6; margin-bottom: 2rem; }
+    
+    .btn-method { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: .8rem; border-radius: var(--radius-md); font-size: .95rem; font-weight: 500; font-family: 'Inter', sans-serif; transition: all .2s; }
+    
+    .btn-manual { background: var(--sage); color: white; border: none; }
+    .method-card:hover .btn-manual { background: var(--sage-mid); }
+    
+    .btn-nlp { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+    .method-card:hover .btn-nlp { background: var(--blue-bg); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header anim">
+    <h1>Pilih Metode Asesmen</h1>
+    <p>Silakan pilih pendekatan yang paling nyaman bagi Anda untuk memulai evaluasi kesehatan mental.</p>
+</div>
+
+<div class="method-grid">
+    <!-- Asesmen Manual -->
+    <a href="/asesmen_manual" class="method-card anim anim-d1">
+        <div class="method-icon icon-manual">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <h3>Asesmen Manual</h3>
+        <p>Jawab serangkaian pertanyaan terstruktur berdasarkan panduan SDKI (Rule-Based Expert System).</p>
+        <div class="btn-method btn-manual">Pilih Manual →</div>
+    </a>
+
+    <!-- Asesmen Chatbot (NLP) - Dummy -->
+    <a href="#" class="method-card anim anim-d2">
+        <div class="method-icon icon-nlp">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <h3>Asesmen Chatbot</h3>
+        <p>Berinteraksi santai dengan AI berbasis NLP layaknya mengobrol dengan seorang profesional.</p>
+        <div class="btn-method btn-nlp">Pilih Chatbot →</div>
+    </a>
+</div>
+{% endblock %}

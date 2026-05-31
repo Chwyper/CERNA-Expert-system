@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit {{ p_kode }} — Admin CERNA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #F0EEEb; --surface: #FFFFFF; --border: #E5E0D8; --border-2: #D0C9BF;
@@ -17,11 +17,11 @@
             --shadow-sm: 0 1px 4px rgba(30,24,18,.06); --shadow-md: 0 4px 16px rgba(30,24,18,.08);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--ink-mid); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-mid); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
         /* SIDEBAR (sama seperti dashboard) */
         .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 230px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1.25rem; display: flex; flex-direction: column; z-index: 100; }
-        .sidebar-logo { display: flex; align-items: center; gap: 9px; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
+        .sidebar-logo { display: flex; align-items: center; gap: 9px; font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
         .logo-mark { width: 28px; height: 28px; background: var(--sage); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .logo-mark svg { width: 15px; height: 15px; fill: white; }
         .sidebar-sub { font-size: .72rem; color: var(--ink-faint); font-weight: 500; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2rem; padding-left: 37px; }
@@ -52,18 +52,18 @@
         .field { margin-bottom: 1rem; }
         .field label { display: block; font-size: .78rem; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem; }
         .field input, .field select, .field textarea {
-            width: 100%; padding: .65rem .9rem; font-family: 'Outfit', sans-serif; font-size: .88rem;
+            width: 100%; padding: .65rem .9rem; font-family: 'Inter', sans-serif; font-size: .88rem;
             border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg);
             color: var(--ink); outline: none; transition: border-color .2s;
         }
         .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--sage); background: var(--surface); }
         .field textarea { min-height: 90px; resize: vertical; }
         .save-row { display: flex; justify-content: flex-end; }
-        .btn-save { padding: .65rem 1.4rem; border-radius: var(--radius-md); border: none; background: var(--sage); color: white; font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+        .btn-save { padding: .65rem 1.4rem; border-radius: var(--radius-md); border: none; background: var(--sage); color: white; font-family: 'Inter', sans-serif; font-size: .88rem; font-weight: 600; cursor: pointer; transition: background .2s; }
         .btn-save:hover { background: var(--sage-mid); }
-        .btn-ghost { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; font-family: 'Outfit', sans-serif; font-size: .85rem; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: all .15s; }
+        .btn-ghost { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; font-family: 'Inter', sans-serif; font-size: .85rem; font-weight: 500; color: var(--ink-mid); cursor: pointer; transition: all .15s; }
         .btn-ghost:hover { background: var(--bg); }
-        .btn-danger { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid rgba(192,57,43,.3); background: transparent; font-family: 'Outfit', sans-serif; font-size: .85rem; font-weight: 500; color: var(--red); cursor: pointer; transition: all .15s; }
+        .btn-danger { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid rgba(192,57,43,.3); background: transparent; font-family: 'Inter', sans-serif; font-size: .85rem; font-weight: 500; color: var(--red); cursor: pointer; transition: all .15s; }
         .btn-danger:hover { background: var(--red-bg); }
         .btn-sm { padding: 4px 10px; font-size: .78rem; border-radius: 7px; }
 
@@ -81,17 +81,17 @@
 
         /* EDITABLE INPUT */
         .inline-edit { display: none; gap: .4rem; align-items: center; }
-        .inline-edit input { flex: 1; padding: 4px 8px; font-size: .84rem; border: 1.5px solid var(--sage); border-radius: 7px; background: var(--surface); font-family: 'Outfit', sans-serif; outline: none; }
-        .inline-edit .btn-ok { padding: 4px 10px; background: var(--sage); color: white; border: none; border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600; }
-        .inline-edit .btn-cancel-e { padding: 4px 8px; background: transparent; border: 1px solid var(--border); border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: 'Outfit', sans-serif; color: var(--ink-muted); }
+        .inline-edit input { flex: 1; padding: 4px 8px; font-size: .84rem; border: 1.5px solid var(--sage); border-radius: 7px; background: var(--surface); font-family: 'Inter', sans-serif; outline: none; }
+        .inline-edit .btn-ok { padding: 4px 10px; background: var(--sage); color: white; border: none; border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; }
+        .inline-edit .btn-cancel-e { padding: 4px 8px; background: transparent; border: 1px solid var(--border); border-radius: 6px; font-size: .78rem; cursor: pointer; font-family: 'Inter', sans-serif; color: var(--ink-muted); }
 
         .display-row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
         .gejala-nama { flex: 1; }
         .gejala-actions { display: flex; gap: .4rem; opacity: 0; transition: opacity .15s; }
         tr:hover .gejala-actions { opacity: 1; }
-        .btn-edit-g { padding: 3px 9px; font-size: .74rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-muted); cursor: pointer; font-family: 'Outfit', sans-serif; transition: all .15s; }
+        .btn-edit-g { padding: 3px 9px; font-size: .74rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-muted); cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; }
         .btn-edit-g:hover { background: var(--sage-light); color: var(--sage); border-color: var(--sage); }
-        .btn-del-g { padding: 3px 9px; font-size: .74rem; border-radius: 6px; border: 1px solid rgba(192,57,43,.2); background: transparent; color: var(--red); cursor: pointer; font-family: 'Outfit', sans-serif; }
+        .btn-del-g { padding: 3px 9px; font-size: .74rem; border-radius: 6px; border: 1px solid rgba(192,57,43,.2); background: transparent; color: var(--red); cursor: pointer; font-family: 'Inter', sans-serif; }
         .btn-del-g:hover { background: var(--red-bg); }
 
         /* MODAL */
@@ -99,9 +99,9 @@
         .modal-overlay.open { display: flex; }
         .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(30,24,18,.15); animation: popIn .25s cubic-bezier(.16,1,.3,1); }
         @keyframes popIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
-        .modal h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--ink); margin-bottom: 1.25rem; }
+        .modal h3 { font-family: 'Lora', serif; font-size: 1.4rem; font-weight: 600; color: var(--ink); margin-bottom: 1.25rem; }
         .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
-        .btn-cancel { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; font-family: 'Outfit', sans-serif; font-size: .88rem; color: var(--ink-mid); cursor: pointer; }
+        .btn-cancel { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; font-family: 'Inter', sans-serif; font-size: .88rem; color: var(--ink-mid); cursor: pointer; }
 
         /* TOAST */
         .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--ink); color: white; font-size: .85rem; padding: .75rem 1.25rem; border-radius: var(--radius-md); opacity: 0; transform: translateY(10px); transition: all .3s; z-index: 999; pointer-events: none; }
@@ -133,12 +133,12 @@
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             Dashboard
         </a>
+    </div>
+    <div class="sidebar-footer">
         <a href="/" target="_blank" class="nav-item">
             <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Lihat Aplikasi
         </a>
-    </div>
-    <div class="sidebar-footer">
         <a href="/admin/logout" class="nav-item" style="color:var(--red);">
             <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Logout
@@ -158,7 +158,7 @@
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;" class="anim">
         <div>
-            <h1 style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--ink);">{{ p_data.nama_penyakit }}</h1>
+            <h1 style="font-family:'Lora',serif; font-size:2rem; font-weight:600; color:var(--ink);">{{ p_data.nama_penyakit }}</h1>
             <p style="font-size:.85rem; color:var(--ink-muted);">Kode: <strong style="color:var(--sage);">{{ p_kode }}</strong> &middot; Kategori: {{ kategori.get(p_data.kategori, {}).get('label', p_data.kategori) }}</p>
         </div>
         <a href="/admin" class="btn-ghost">← Kembali</a>
