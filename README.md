@@ -99,4 +99,5 @@ Aplikasi ini dikembangkan untuk tujuan edukasi dan _screening_ awal (Sistem Paka
 ---
 
 **Dikembangkan oleh:**  
+Kelompok 2 Untuk Memenuhi Tugas Mata Kuliah Sistem Pakar & Bahasa Alamiah
 ITENAS Bandung &middot; 2026
