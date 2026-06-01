@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #F7F5F2; --surface: #FFFFFF; --border: #E5E0D8;
+            --bg: #FBF9F6; --surface: #FFFFFF; --border: #E8E4DD;
             --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90;
             --ink: #1E1E1E; --ink-mid: #4A4845; --ink-muted: #8C8882; --ink-faint: #C8C4BE;
             --amber: #B8860B; --amber-bg: #FEF3CD;
@@ -22,7 +22,32 @@
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-mid); line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-mid); line-height: 1.65; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 0; }
+        
+        /* Soft Green Motif / Mesh Gradient Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: 
+                radial-gradient(circle at 10% 15%, rgba(74, 124, 111, 0.35) 0%, transparent 55%),
+                radial-gradient(circle at 90% 85%, rgba(106, 158, 144, 0.3) 0%, transparent 55%),
+                radial-gradient(circle at 50% 100%, rgba(184, 134, 11, 0.12) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Subtle Organic Noise Texture Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04; /* Sangat tipis, nyaris hilang */
+            mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
         
         main { flex: 1; }
 
