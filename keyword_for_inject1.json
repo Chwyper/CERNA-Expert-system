@@ -1,0 +1,1472 @@
+[
+    {
+        "gejala_kode": "G01",
+        "kata": "napas pendek",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G01",
+        "kata": "sesak",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G01",
+        "kata": "ngos-ngosan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G01",
+        "kata": "susah napas",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G01",
+        "kata": "nafas berat",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G02",
+        "kata": "jantung berdebar",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G02",
+        "kata": "deg-degan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G02",
+        "kata": "nadi cepat",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G02",
+        "kata": "darah tinggi",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G02",
+        "kata": "jantung kencang",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G03",
+        "kata": "mulut kering",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G03",
+        "kata": "tenggorokan kering",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G03",
+        "kata": "haus terus",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G03",
+        "kata": "bibir kering",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G04",
+        "kata": "tidak nafsu makan",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G04",
+        "kata": "males makan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G04",
+        "kata": "gak lapar",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G04",
+        "kata": "skip makan",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G04",
+        "kata": "susah makan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G09",
+        "kata": "sakit kepala",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G09",
+        "kata": "pusing",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G09",
+        "kata": "kepala nyut-nyutan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G09",
+        "kata": "migrain",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G09",
+        "kata": "kepala berat",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G10",
+        "kata": "susah tidur",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G10",
+        "kata": "insomnia",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G10",
+        "kata": "begadang",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G10",
+        "kata": "tidak bisa tidur",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G10",
+        "kata": "mata melek terus",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G10",
+        "kata": "tidur gak nyenyak",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G11",
+        "kata": "keringat berlebih",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G11",
+        "kata": "banyak keringat",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G11",
+        "kata": "basah kuyup",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G11",
+        "kata": "keringat dingin",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G11",
+        "kata": "gampang keringetan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G12",
+        "kata": "tidak berdaya",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G12",
+        "kata": "gak bisa kontrol",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G12",
+        "kata": "lepas kendali",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G12",
+        "kata": "pasrah",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G12",
+        "kata": "powerless",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G13",
+        "kata": "tidak produktif",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G13",
+        "kata": "gak menghasilkan",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G13",
+        "kata": "gak berguna",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G13",
+        "kata": "percuma usaha",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G13",
+        "kata": "gak ada gunanya",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G14",
+        "kata": "frustrasi",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G14",
+        "kata": "sebel sama diri sendiri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G14",
+        "kata": "kesal",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G14",
+        "kata": "bete",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G14",
+        "kata": "gak sanggup",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G15",
+        "kata": "ragu-ragu",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G15",
+        "kata": "gak tau peran",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G15",
+        "kata": "bingung identitas",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G15",
+        "kata": "gak yakin diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G15",
+        "kata": "insecure",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G16",
+        "kata": "gak bisa urus diri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G16",
+        "kata": "males urus diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G16",
+        "kata": "nyerah sama diri",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G16",
+        "kata": "gak mau merawat diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G17",
+        "kata": "gak mau cari info",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G17",
+        "kata": "malas cari tahu",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G17",
+        "kata": "apatis",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G17",
+        "kata": "gak peduli kesehatan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G18",
+        "kata": "gak ikut keputusan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G18",
+        "kata": "pasif",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G18",
+        "kata": "terima aja",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G18",
+        "kata": "diam saja",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G19",
+        "kata": "susah curhat",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G19",
+        "kata": "gak mau cerita",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G19",
+        "kata": "nutup diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G19",
+        "kata": "memendam perasaan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G19",
+        "kata": "gak jujur sama perasaan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G20",
+        "kata": "bergantung orang lain",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G20",
+        "kata": "gampang marah",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G20",
+        "kata": "sensitif",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G20",
+        "kata": "klengklengan",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G20",
+        "kata": "mudah tersulut",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G21",
+        "kata": "gampang mundur",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G21",
+        "kata": "gak bisa teguh pendapat",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G21",
+        "kata": "minta maaf terus",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G21",
+        "kata": "gampang ikut orang",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G22",
+        "kata": "kehilangan anggota tubuh",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G22",
+        "kata": "amputasi",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G22",
+        "kata": "tubuh tidak utuh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G23",
+        "kata": "bentuk tubuh berubah",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G23",
+        "kata": "fisik berubah",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G23",
+        "kata": "bekas operasi",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G23",
+        "kata": "cacat fisik",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G24",
+        "kata": "malu sama tubuh",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G24",
+        "kata": "nutupin tubuh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G24",
+        "kata": "sengaja pamer luka",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G24",
+        "kata": "sembunyi bagian tubuh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G25",
+        "kata": "gak mau lihat cermin",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G25",
+        "kata": "ogah liat tubuh sendiri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G25",
+        "kata": "hindari cermin",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G26",
+        "kata": "gak mau sentuh tubuh",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G26",
+        "kata": "jijik sama tubuh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G26",
+        "kata": "ogah pegang luka",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G27",
+        "kata": "menarik diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G27",
+        "kata": "jarang keluar",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G27",
+        "kata": "gak mau sosialisasi",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G27",
+        "kata": "mengurung diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G27",
+        "kata": "males hangout",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G28",
+        "kata": "malu",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G28",
+        "kata": "merasa bersalah",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G28",
+        "kata": "ngerasa jelek",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G28",
+        "kata": "minder soal tubuh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G30",
+        "kata": "jelek-jelekin diri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G30",
+        "kata": "ngomong negatif tentang diri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G30",
+        "kata": "self-hate",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G30",
+        "kata": "nyalahin diri terus",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G31",
+        "kata": "susah ambil keputusan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G31",
+        "kata": "bingung pilih",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G31",
+        "kata": "overthinking",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G31",
+        "kata": "gak bisa mutusin",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G32",
+        "kata": "ngehina diri sendiri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G32",
+        "kata": "meremehkan diri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G32",
+        "kata": "ngerasa gak worth it",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G32",
+        "kata": "ngerasa gak berharga",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G33",
+        "kata": "sering bilang gak bisa",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G33",
+        "kata": "ngeluh tentang diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G33",
+        "kata": "negative self-talk",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G33",
+        "kata": "down talk diri sendiri",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G34",
+        "kata": "nyalahin diri sendiri",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G34",
+        "kata": "merasa bersalah atas masalah",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G34",
+        "kata": "guilt trip diri sendiri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G34",
+        "kata": "semua salah aku",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G35",
+        "kata": "gak bisa mutusin",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G35",
+        "kata": "bimbang",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G35",
+        "kata": "galau pilihan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G35",
+        "kata": "takut salah pilih",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G36",
+        "kata": "hidup gak ada artinya",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G36",
+        "kata": "hampa",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G36",
+        "kata": "gak ada harapan",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G36",
+        "kata": "hopeless",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G36",
+        "kata": "kosong",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G37",
+        "kata": "sering ngeluh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G37",
+        "kata": "murung",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G37",
+        "kata": "manyun",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G37",
+        "kata": "sedih terus",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G38",
+        "kata": "diam",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G38",
+        "kata": "gak mau ngobrol",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G38",
+        "kata": "pendiam mendadak",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G38",
+        "kata": "tutup mulut",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G39",
+        "kata": "muka datar",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G39",
+        "kata": "ekspresi kosong",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G39",
+        "kata": "blank",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G39",
+        "kata": "wajah tanpa emosi",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G40",
+        "kata": "menyendiri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G40",
+        "kata": "menghindar",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G40",
+        "kata": "gak mau ketemu orang",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G40",
+        "kata": "isolasi diri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G41",
+        "kata": "gak nafsu makan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G41",
+        "kata": "makan berlebihan",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G41",
+        "kata": "makan gak teratur",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G41",
+        "kata": "binge eating",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G42",
+        "kata": "males-malesan",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G42",
+        "kata": "gak semangat",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G42",
+        "kata": "loyo",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G42",
+        "kata": "gak ada motivasi",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G42",
+        "kata": "lemas",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G43",
+        "kata": "denger suara",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G43",
+        "kata": "ada bisikan",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G43",
+        "kata": "suara tanpa sumber",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G43",
+        "kata": "denger yang gak ada",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G44",
+        "kata": "lihat bayangan",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G44",
+        "kata": "lihat sesuatu yang gak ada",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G44",
+        "kata": "halusinasi",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G44",
+        "kata": "nampak sosok",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G45",
+        "kata": "ngomong sendiri",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G45",
+        "kata": "bicara sendiri",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G45",
+        "kata": "nyerocos sendiri",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G45",
+        "kata": "monolog",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G46",
+        "kata": "gelisah",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G46",
+        "kata": "mondar-mandir",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G46",
+        "kata": "gak bisa diam",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G46",
+        "kata": "resah",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G47",
+        "kata": "melotot kosong",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G47",
+        "kata": "natap satu titik",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G47",
+        "kata": "pandangan jauh",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G47",
+        "kata": "pandangan kosong",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G48",
+        "kata": "susah fokus",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G48",
+        "kata": "gampang buyar",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G48",
+        "kata": "gak konsentrasi",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G48",
+        "kata": "pikiran melayang",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G49",
+        "kata": "ngaku orang penting",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G49",
+        "kata": "merasa spesial",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G49",
+        "kata": "yakin hal aneh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G49",
+        "kata": "delusi",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G49",
+        "kata": "keyakinan ganjil",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G50",
+        "kata": "curiga berlebihan",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G50",
+        "kata": "merasa diawasi",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G50",
+        "kata": "paranoid",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G50",
+        "kata": "gak percaya orang",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G51",
+        "kata": "ngomong melompat-lompat",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G51",
+        "kata": "cerita gak nyambung",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G51",
+        "kata": "cerewet",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G51",
+        "kata": "ngomongin banyak hal sekaligus",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G52",
+        "kata": "muka tegang",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G52",
+        "kata": "ekspresi aneh",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G52",
+        "kata": "raut gak sesuai",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G53",
+        "kata": "mengancam",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G53",
+        "kata": "misuh",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G53",
+        "kata": "kata kasar",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G53",
+        "kata": "verbal abuse",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G53",
+        "kata": "ngegas",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G54",
+        "kata": "mukul",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G54",
+        "kata": "ngerusak barang",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G54",
+        "kata": "menyerang",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G54",
+        "kata": "smash barang",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G54",
+        "kata": "kekerasan fisik",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G55",
+        "kata": "mata melotot",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G55",
+        "kata": "tangan mengepal",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G55",
+        "kata": "muka merah",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G55",
+        "kata": "tampang marah",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G56",
+        "kata": "badan kaku",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G56",
+        "kata": "tegang banget",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G56",
+        "kata": "otot kencang",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G57",
+        "kata": "jalan nunduk",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G57",
+        "kata": "bungkuk",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G57",
+        "kata": "postur lemah",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G57",
+        "kata": "gak tegak",
+        "bobot": 0.75
+    },
+    {
+        "gejala_kode": "G58",
+        "kata": "gak berani kontak mata",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G58",
+        "kata": "nunduk waktu ngobrol",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G58",
+        "kata": "hindari tatapan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G58",
+        "kata": "malu mata",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G59",
+        "kata": "ngomong pelan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G59",
+        "kata": "suara lirih",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G59",
+        "kata": "gak tegas bicara",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G59",
+        "kata": "gumam",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G60",
+        "kata": "ikut kata orang terus",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G60",
+        "kata": "gak bisa mutusin sendiri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G60",
+        "kata": "minta validasi terus",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G60",
+        "kata": "bergantung pendapat orang",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G61",
+        "kata": "ngerasa gak berguna",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G61",
+        "kata": "minder kronis",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G61",
+        "kata": "self-worth rendah",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G61",
+        "kata": "ngerasa worthless",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G61",
+        "kata": "gak ada harganya",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G62",
+        "kata": "mau sendiri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G62",
+        "kata": "gak mau bergaul",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G62",
+        "kata": "ogah sosialisasi",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G62",
+        "kata": "introvert ekstrem",
+        "bobot": 0.7
+    },
+    {
+        "gejala_kode": "G63",
+        "kata": "nolak temu orang",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G63",
+        "kata": "menghindari orang",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G63",
+        "kata": "kabur dari sosial",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G63",
+        "kata": "gak mau ketemu",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G64",
+        "kata": "gak mau lihat mata",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G64",
+        "kata": "nunduk waktu bicara",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G64",
+        "kata": "tatapan kosong saat ngobrol",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G65",
+        "kata": "males keluar",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G65",
+        "kata": "rebahan terus",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G65",
+        "kata": "gak mau ikut kegiatan",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G65",
+        "kata": "males bareng orang",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G66",
+        "kata": "males mandi",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G66",
+        "kata": "gak mau mandi",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G66",
+        "kata": "jarang mandi",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G66",
+        "kata": "gak peduli kebersihan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G67",
+        "kata": "rambut kotor",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G67",
+        "kata": "bau badan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G67",
+        "kata": "kulit berdaki",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G67",
+        "kata": "gigi kotor",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G67",
+        "kata": "gak jaga kebersihan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G68",
+        "kata": "kuku panjang kotor",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G68",
+        "kata": "gak potong kuku",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G68",
+        "kata": "kuku hitam",
+        "bobot": 0.8
+    },
+    {
+        "gejala_kode": "G69",
+        "kata": "baju kotor",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G69",
+        "kata": "pakaian berantakan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G69",
+        "kata": "gak ganti baju",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G69",
+        "kata": "penampilan acak-acakan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G70",
+        "kata": "makan berantakan",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G70",
+        "kata": "gak bisa makan sendiri",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G70",
+        "kata": "makanan berceceran",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G71",
+        "kata": "mau mati",
+        "bobot": 1.0
+    },
+    {
+        "gejala_kode": "G71",
+        "kata": "ingin mengakhiri hidup",
+        "bobot": 1.0
+    },
+    {
+        "gejala_kode": "G71",
+        "kata": "pengen bunuh diri",
+        "bobot": 1.0
+    },
+    {
+        "gejala_kode": "G71",
+        "kata": "capek hidup",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G71",
+        "kata": "gak mau hidup lagi",
+        "bobot": 1.0
+    },
+    {
+        "gejala_kode": "G72",
+        "kata": "nyari benda tajam",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G72",
+        "kata": "kumpulin obat-obatan",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G72",
+        "kata": "nyiapin alat berbahaya",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G73",
+        "kata": "bikin surat wasiat",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G73",
+        "kata": "pamit ke semua orang",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G73",
+        "kata": "bagi-bagi barang",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G73",
+        "kata": "bilang selamat tinggal",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G74",
+        "kata": "tiba-tiba ceria",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G74",
+        "kata": "senang mendadak",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G74",
+        "kata": "bahagia tiba-tiba setelah sedih",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G74",
+        "kata": "mood swing ekstrem",
+        "bobot": 0.85
+    },
+    {
+        "gejala_kode": "G75",
+        "kata": "ngerasa jadi beban",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G75",
+        "kata": "merasa tidak berharga",
+        "bobot": 0.95
+    },
+    {
+        "gejala_kode": "G75",
+        "kata": "gak ada yang peduli",
+        "bobot": 0.9
+    },
+    {
+        "gejala_kode": "G75",
+        "kata": "dunia lebih baik tanpaku",
+        "bobot": 1.0
+    },
+    {
+        "gejala_kode": "G75",
+        "kata": "menyusahkan orang",
+        "bobot": 0.9
+    }
+]
