@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamus NLP — Admin CERNA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F0EEEb; --surface: #FFFFFF; --border: #E5E0D8; --border-2: #D0C9BF;
+            --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90;
+            --ink: #1E1E1E; --ink-mid: #4A4845; --ink-muted: #8C8882; --ink-faint: #C8C4BE;
+            --amber: #B8860B; --amber-bg: #FEF3CD;
+            --red: #C0392B; --red-bg: #FDEDEC;
+            --radius-md: 12px; --radius-lg: 18px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-mid); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 230px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1.25rem; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-logo { display: flex; align-items: center; gap: 9px; font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
+        .logo-mark { width: 28px; height: 28px; background: var(--sage); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .logo-mark svg { width: 15px; height: 15px; fill: white; }
+        .sidebar-sub { font-size: .72rem; color: var(--ink-faint); font-weight: 500; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2rem; padding-left: 37px; }
+        .nav-label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); padding: 0 .6rem; margin-bottom: .4rem; margin-top: 1rem; }
+        .nav-item { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; border-radius: 9px; font-size: .87rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; transition: all .15s; }
+        .nav-item:hover { background: var(--bg); color: var(--ink); }
+        .nav-item.active { background: var(--sage-light); color: var(--sage); font-weight: 600; }
+        .nav-item svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem; }
+        .sidebar-user { font-size: .8rem; color: var(--ink-muted); margin-bottom: .75rem; }
+        .sidebar-user strong { display: block; color: var(--ink); font-size: .85rem; }
+
+        /* MAIN */
+        .main { margin-left: 230px; padding: 2rem 2.5rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-family: 'Lora', serif; font-size: 2rem; font-weight: 600; color: var(--ink); margin-bottom: .3rem; }
+        .page-header p { font-size: .88rem; color: var(--ink-muted); }
+
+        /* TABLE */
+        .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .table-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .table-header h3 { font-size: 1rem; font-weight: 600; color: var(--ink); }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); padding: .65rem 1.5rem; background: var(--bg); border-bottom: 1px solid var(--border); }
+        td { padding: .85rem 1.5rem; border-bottom: 1px solid var(--border); font-size: .88rem; vertical-align: middle; }
+        tr:hover td { background: var(--bg); }
+
+        .btn-tbl { display: inline-flex; align-items: center; gap: 4px; font-size: .78rem; font-weight: 500; font-family: 'Inter', sans-serif; padding: 4px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-mid); text-decoration: none; cursor: pointer; transition: all .15s; }
+        .btn-tbl:hover { background: var(--bg); border-color: var(--border-2); }
+        .btn-tbl.primary { background: var(--sage); color: white; border-color: var(--sage); }
+        .btn-tbl.primary:hover { background: var(--sage-mid); }
+        .btn-tbl.danger { color: var(--red); border-color: rgba(192,57,43,.25); }
+        .btn-tbl.danger:hover { background: var(--red-bg); }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(30,24,18,.35); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(30,24,18,.15); }
+        .modal h3 { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); margin-bottom: 1.5rem; }
+        .field { margin-bottom: 1rem; }
+        .field label { display: block; font-size: .8rem; font-weight: 600; color: var(--ink); margin-bottom: .4rem; }
+        .field input, .field select { width: 100%; padding: .65rem .9rem; font-family: 'Inter', sans-serif; font-size: .88rem; border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg); color: var(--ink); outline: none; }
+        .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+        .btn-cancel { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; cursor: pointer; }
+        .btn-save { padding: .6rem 1.4rem; border-radius: var(--radius-md); border: none; background: var(--sage); color: white; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div>
+        <div class="sidebar-logo">
+            <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg></div>
+            CERNA
+        </div>
+        <div class="sidebar-sub">Panel Admin</div>
+
+        <div class="nav-label">Menu</div>
+        <a href="/admin" class="nav-item">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </a>
+        <a href="/admin/kata_kunci" class="nav-item active">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Kamus NLP
+        </a>
+        <a href="/admin/api/export" target="_blank" class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="/" target="_blank" class="nav-item">Lihat Aplikasi</a>
+        <a href="/admin/logout" class="nav-item" style="color:var(--red);">Logout</a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="page-header">
+        <h1>Kamus NLP (Kata Kunci)</h1>
+        <p>Kelola perbendaharaan kata chatbot agar lebih pintar mengenali gejala pengguna.</p>
+    </div>
+
+    <div class="table-wrap">
+        <div class="table-header">
+            <h3>Daftar Kata Kunci</h3>
+            <button class="btn-tbl primary" onclick="document.getElementById('modalAdd').classList.add('open')">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Kata
+            </button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Gejala Terkait</th>
+                    <th>Akar Kata (Keyword)</th>
+                    <th>Bobot CF</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kw in kata_kunci_list %}
+                <tr>
+                    <td><strong>{{ kw.gejala.kode }}</strong> - {{ kw.gejala.nama }}</td>
+                    <td>{{ kw.kata }}</td>
+                    <td>{{ kw.bobot }}</td>
+                    <td>
+                        <form action="/admin/kata_kunci/delete/{{ kw.id }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus kata kunci ini?');">
+                            <button type="submit" class="btn-tbl danger">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- MODAL ADD -->
+<div class="modal-overlay" id="modalAdd">
+    <div class="modal">
+        <h3>Tambah Kata Kunci</h3>
+        <form action="/admin/kata_kunci/add" method="POST">
+            <div class="field">
+                <label>Pilih Gejala</label>
+                <select name="gejala_kode" required>
+                    <option value="">-- Pilih Gejala --</option>
+                    {% for g in gejala_list %}
+                    <option value="{{ g.kode }}">[{{ g.kode }}] {{ g.nama }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Akar Kata (Satu kata baku/dasar)</label>
+                <input type="text" name="kata" placeholder="Misal: pusing" required>
+            </div>
+            <div class="field">
+                <label>Bobot (0.0 - 1.0)</label>
+                <input type="number" step="0.01" name="bobot" value="0.8" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('modalAdd').classList.remove('open')">Batal</button>
+                <button type="submit" class="btn-save">Simpan Kata</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

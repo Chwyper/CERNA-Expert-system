@@ -278,6 +278,58 @@ def api_tambah_gejala(p_kode):
     return jsonify({"status": "ok", "kode": g_kode})
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# ADMIN - KATA KUNCI NLP (TAHAP 5)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@app.route("/admin/kata_kunci")
+@admin_required
+def admin_kata_kunci():
+    # Ambil semua kata kunci dan daftar gejala untuk form dropdown
+    kata_kunci_list = KataKunci.query.join(Gejala).order_by(Gejala.kode, KataKunci.kata).all()
+    gejala_list = Gejala.query.order_by(Gejala.kode).all()
+    return render_template("admin_kata_kunci.html", kata_kunci_list=kata_kunci_list, gejala_list=gejala_list)
+
+@app.route("/admin/kata_kunci/add", methods=["POST"])
+@admin_required
+def add_kata_kunci():
+    try:
+        data = request.form
+        gejala_kode = data.get("gejala_kode")
+        kata = data.get("kata", "").strip().lower()
+        bobot = float(data.get("bobot", 0.8))
+        
+        if not gejala_kode or not kata:
+            raise ValueError("Gejala dan Kata Kunci wajib diisi.")
+            
+        # Cek duplikat
+        exists = KataKunci.query.filter_by(gejala_kode=gejala_kode, kata=kata).first()
+        if exists:
+            # Update bobot saja
+            exists.bobot = bobot
+        else:
+            kw = KataKunci(gejala_kode=gejala_kode, kata=kata, bobot=bobot)
+            db.session.add(kw)
+            
+        db.session.commit()
+        return redirect(url_for("admin_kata_kunci"))
+    except Exception as e:
+        db.session.rollback()
+        return f"Error: {str(e)}", 400
+
+@app.route("/admin/kata_kunci/delete/<int:kw_id>", methods=["POST"])
+@admin_required
+def delete_kata_kunci(kw_id):
+    try:
+        kw = KataKunci.query.get_or_404(kw_id)
+        db.session.delete(kw)
+        db.session.commit()
+        return redirect(url_for("admin_kata_kunci"))
+    except Exception as e:
+        db.session.rollback()
+        return f"Error: {str(e)}", 400
+
+
 # ── API Admin: Hapus gejala dari penyakit
 @app.route("/admin/api/penyakit/<p_kode>/gejala/<g_kode>", methods=["DELETE"])
 @admin_required
