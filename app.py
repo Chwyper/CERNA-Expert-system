@@ -7,9 +7,10 @@ Enhanced Flask App:
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os, json
-from models import db, Penyakit, Gejala, PenyakitGejala
+from models import db, Penyakit, Gejala, PenyakitGejala, KataKunci
 from seed_data import KATEGORI
 from engine import jalankan_diagnosa
+from nlp_engine import proses_pesan_chatbot
 
 app = Flask(__name__)
 app.secret_key = "cerna_secret_2026"   # Ganti dengan nilai random di produksi
@@ -34,8 +35,43 @@ def index():
 def pilih_metode():
     return render_template("pilih_metode.html")
 
+@app.route("/chatbot")
+def chatbot():
+    return render_template("chatbot.html")
 
-@app.route("/asesmen_manual")
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    data = request.get_json()
+    pesan = data.get("pesan", "")
+    
+    if not pesan:
+        return jsonify({"balasan": "Tolong ceritakan apa yang Anda rasakan.", "hasil": None})
+        
+    user_inputs = proses_pesan_chatbot(pesan)
+    
+    if not user_inputs:
+        return jsonify({
+            "balasan": "Saya kurang menangkap keluhan spesifik dari cerita Anda. Bisa diceritakan lebih detail mengenai gejala fisik atau emosi yang Anda rasakan?", 
+            "hasil": None
+        })
+        
+    hasil_diagnosa = jalankan_diagnosa(user_inputs)
+    hasil_sorted = sorted(hasil_diagnosa, key=lambda x: x['keyakinan'], reverse=True)
+    
+    # Ambil hasil teratas jika keyakinannya cukup kuat (misal > 20%)
+    if hasil_sorted and hasil_sorted[0]['keyakinan'] > 20.0:
+        prediksi = hasil_sorted[0]
+        balasan = (
+            f"Dari cerita Anda, saya mendeteksi indikasi <b>{prediksi['nama_penyakit']}</b> "
+            f"dengan tingkat kecocokan {prediksi['keyakinan']}%.<br><br>"
+            f"Gejala yang tertangkap: {prediksi['gejala_match']} dari {prediksi['total_gejala']} gejala umum penyakit ini."
+        )
+        return jsonify({"balasan": balasan, "hasil": prediksi})
+    else:
+        return jsonify({
+            "balasan": "Dari yang Anda ceritakan, gejalanya masih terlalu umum atau tidak spesifik. Boleh ceritakan keluhan lain yang lebih spesifik?", 
+            "hasil": None
+        })
 def asesmen_manual():
     kategori_list = []
     for k_id, k_data in KATEGORI.items():
