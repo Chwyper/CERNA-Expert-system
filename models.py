@@ -71,3 +71,12 @@ class PenyakitGejala(db.Model):
 
     penyakit = db.relationship('Penyakit', back_populates='gejala_rel')
     gejala = db.relationship('Gejala', back_populates='penyakit_rel')
+
+class KataKunci(db.Model):
+    __tablename__ = 'kata_kunci'
+    id = db.Column(db.Integer, primary_key=True)
+    gejala_kode = db.Column(db.String(10), db.ForeignKey('gejala.kode'), nullable=False)
+    kata = db.Column(db.String(50), nullable=False)
+    bobot = db.Column(db.Float, nullable=False, default=0.8)
+
+    gejala = db.relationship('Gejala', backref=db.backref('kata_kunci_rel', cascade='all, delete-orphan'))

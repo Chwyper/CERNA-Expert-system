@@ -7,9 +7,10 @@ Enhanced Flask App:
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os, json
-from models import db, Penyakit, Gejala, PenyakitGejala
+from models import db, Penyakit, Gejala, PenyakitGejala, KataKunci
 from seed_data import KATEGORI
 from engine import jalankan_diagnosa
+from nlp_engine import proses_pesan_chatbot
 
 app = Flask(__name__)
 app.secret_key = "cerna_secret_2026"   # Ganti dengan nilai random di produksi
@@ -34,8 +35,43 @@ def index():
 def pilih_metode():
     return render_template("pilih_metode.html")
 
+@app.route("/chatbot")
+def chatbot():
+    return render_template("chatbot.html")
 
-@app.route("/asesmen_manual")
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    data = request.get_json()
+    pesan = data.get("pesan", "")
+    
+    if not pesan:
+        return jsonify({"balasan": "Tolong ceritakan apa yang Anda rasakan.", "hasil": None})
+        
+    user_inputs = proses_pesan_chatbot(pesan)
+    
+    if not user_inputs:
+        return jsonify({
+            "balasan": "Saya kurang menangkap keluhan spesifik dari cerita Anda. Bisa diceritakan lebih detail mengenai gejala fisik atau emosi yang Anda rasakan?", 
+            "hasil": None
+        })
+        
+    hasil_diagnosa = jalankan_diagnosa(user_inputs)
+    hasil_sorted = sorted(hasil_diagnosa, key=lambda x: x['keyakinan'], reverse=True)
+    
+    # Ambil hasil teratas jika keyakinannya cukup kuat (misal > 20%)
+    if hasil_sorted and hasil_sorted[0]['keyakinan'] > 20.0:
+        prediksi = hasil_sorted[0]
+        balasan = (
+            f"Dari cerita Anda, saya mendeteksi indikasi <b>{prediksi['nama_penyakit']}</b> "
+            f"dengan tingkat kecocokan {prediksi['keyakinan']}%.<br><br>"
+            f"Gejala yang tertangkap: {prediksi['gejala_match']} dari {prediksi['total_gejala']} gejala umum penyakit ini."
+        )
+        return jsonify({"balasan": balasan, "hasil": prediksi})
+    else:
+        return jsonify({
+            "balasan": "Dari yang Anda ceritakan, gejalanya masih terlalu umum atau tidak spesifik. Boleh ceritakan keluhan lain yang lebih spesifik?", 
+            "hasil": None
+        })
 def asesmen_manual():
     kategori_list = []
     for k_id, k_data in KATEGORI.items():
@@ -240,6 +276,58 @@ def api_tambah_gejala(p_kode):
         
     db.session.commit()
     return jsonify({"status": "ok", "kode": g_kode})
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# ADMIN - KATA KUNCI NLP (TAHAP 5)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@app.route("/admin/kata_kunci")
+@admin_required
+def admin_kata_kunci():
+    # Ambil semua kata kunci dan daftar gejala untuk form dropdown
+    kata_kunci_list = KataKunci.query.join(Gejala).order_by(Gejala.kode, KataKunci.kata).all()
+    gejala_list = Gejala.query.order_by(Gejala.kode).all()
+    return render_template("admin_kata_kunci.html", kata_kunci_list=kata_kunci_list, gejala_list=gejala_list)
+
+@app.route("/admin/kata_kunci/add", methods=["POST"])
+@admin_required
+def add_kata_kunci():
+    try:
+        data = request.form
+        gejala_kode = data.get("gejala_kode")
+        kata = data.get("kata", "").strip().lower()
+        bobot = float(data.get("bobot", 0.8))
+        
+        if not gejala_kode or not kata:
+            raise ValueError("Gejala dan Kata Kunci wajib diisi.")
+            
+        # Cek duplikat
+        exists = KataKunci.query.filter_by(gejala_kode=gejala_kode, kata=kata).first()
+        if exists:
+            # Update bobot saja
+            exists.bobot = bobot
+        else:
+            kw = KataKunci(gejala_kode=gejala_kode, kata=kata, bobot=bobot)
+            db.session.add(kw)
+            
+        db.session.commit()
+        return redirect(url_for("admin_kata_kunci"))
+    except Exception as e:
+        db.session.rollback()
+        return f"Error: {str(e)}", 400
+
+@app.route("/admin/kata_kunci/delete/<int:kw_id>", methods=["POST"])
+@admin_required
+def delete_kata_kunci(kw_id):
+    try:
+        kw = KataKunci.query.get_or_404(kw_id)
+        db.session.delete(kw)
+        db.session.commit()
+        return redirect(url_for("admin_kata_kunci"))
+    except Exception as e:
+        db.session.rollback()
+        return f"Error: {str(e)}", 400
 
 
 # ── API Admin: Hapus gejala dari penyakit
