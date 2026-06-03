@@ -56,6 +56,70 @@ def main():
         ekspektasi_TIDAK_mengandung=[]
     )
 
+    # Skenario 4: Paragraf Panjang Curhatan
+    run_test(
+        "SKENARIO 4: Paragraf Panjang Curhatan",
+        "Halo dok, perkenalkan saya Budi. Saya akhir-akhir ini tuh merasa gampang capek setiap habis kerja. Terus yang paling mengganggu itu SAKIT KEPALA banget gatau kenapa padahal udah istirahat cukup. Trus ya gitu dehhh... nafasku kadang suka sesak padahal nggak ada riwayat asma atau alergi debu. Terus malamnya itu sumpah SUSAH banget buat tidur nyenyak. Kira-kira saya sakit apa ya dok?",
+        ekspektasi_mengandung=["G09", "G10", "G01"], # Sakit kepala (G09), susah tidur (G10), sesak (G01)
+        ekspektasi_TIDAK_mengandung=[]
+    )
+    
+    # Skenario 5: Tanda Baca Berantakan dan Campur Kapitalisasi
+    run_test(
+        "SKENARIO 5: Tanda Baca Berantakan dan Campur Kapitalisasi",
+        "dok...tolong,,,dada,,suka,,BERDEBAR-DEBAR gajelas?!, pdhl tdk pusing...tp sulit...tidur. knp ya dok???!!",
+        ekspektasi_mengandung=["G02", "G10"], # dada berdebar (G02), sulit tidur (G10)
+        ekspektasi_TIDAK_mengandung=["G09"] # pusing dinegasikan (tdk pusing)
+    )
+    
+    # Skenario 6: Multiple Negation
+    run_test(
+        "SKENARIO 6: Multi-Negasi di Kalimat Kompleks",
+        "hari ini saya tidak sesak nafas dan bukan pusing, cuma agak susah tidur aja",
+        ekspektasi_mengandung=["G10"], # susah tidur
+        ekspektasi_TIDAK_mengandung=["G01", "G09"] # sesak, pusing harus ke skip
+    )
+
+    # Skenario 7: Typo Parah (Salah Ketik)
+    run_test(
+        "SKENARIO 7: Typo Parah (Salah Ketik)",
+        "dok kpla sya pusiiing bnget trs mual2 gtu, nafas jg sesek.",
+        ekspektasi_mengandung=["G09", "G01"], # pusing (G09), sesak (G01)
+        ekspektasi_TIDAK_mengandung=[] 
+    )
+
+    # Skenario 8: Kata Kiasan / Bahasa Gaul / Sinonim
+    run_test(
+        "SKENARIO 8: Kata Kiasan / Bahasa Gaul / Sinonim",
+        "perut saya rasanya eneg, kepala mumet banget muter-muter, terus dada deg-degan.",
+        ekspektasi_mengandung=["G09", "G02"], # mumet/muter -> pusing (G09), deg-degan -> dada berdebar (G02)
+        ekspektasi_TIDAK_mengandung=[] 
+    )
+
+    # Skenario 9: Negasi Jarak Jauh (Long-Distance Negation)
+    run_test(
+        "SKENARIO 9: Negasi Jarak Jauh (Long-Distance Negation)",
+        "saya tidak pernah merasa dada saya itu berdebar dok.",
+        ekspektasi_mengandung=[], 
+        ekspektasi_TIDAK_mengandung=["G02"] # berdebar (G02) dinegasi oleh "tidak" di awal
+    )
+
+    # Skenario 10: Kontradiksi Waktu (Dulu vs Sekarang)
+    run_test(
+        "SKENARIO 10: Kontradiksi Waktu (Dulu vs Sekarang)",
+        "seminggu lalu emang pusing, tapi sekarang udah nggak pusing lagi, cuma tinggal susah tidur aja.",
+        ekspektasi_mengandung=["G10"], # susah tidur (G10)
+        ekspektasi_TIDAK_mengandung=["G09"] # pusing (G09) dinegasikan
+    )
+
+    # Skenario 11: Pemisahan Gejala Bertumpuk Tanpa Spasi
+    run_test(
+        "SKENARIO 11: Pemisahan Gejala Bertumpuk Tanpa Spasi",
+        "sakitkepala banget dok, trus dada.berdebar.",
+        ekspektasi_mengandung=["G09", "G02"], # sakit kepala (G09), dada berdebar (G02)
+        ekspektasi_TIDAK_mengandung=[] 
+    )
+
 if __name__ == "__main__":
     main()
 
