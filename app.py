@@ -6,11 +6,12 @@ Enhanced Flask App:
 """
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import os, json
+from functools import wraps
+import os, json, random
 from models import db, Penyakit, Gejala, PenyakitGejala, KataKunci
 from seed_data import KATEGORI
 from engine import jalankan_diagnosa
-from nlp_engine import proses_pesan_chatbot
+from nlp_engine import proses_pesan_chatbot, invalidate_keyword_cache
 
 app = Flask(__name__)
 app.secret_key = "cerna_secret_2026"   # Ganti dengan nilai random di produksi
@@ -137,7 +138,7 @@ def api_chat():
         # Batasi pertanyaan verifikasi maksimum 2 kali agar tidak looping
         MAX_VERIFIKASI = 2
         if (prediksi['keyakinan'] < 85 or prediksi['gejala_match'] < 3) and len(sudah_ditanya) < MAX_VERIFIKASI:
-            penyakit_obj = Penyakit.query.get(prediksi['kode_penyakit'])
+            penyakit_obj = db.session.get(Penyakit, prediksi['kode_penyakit'])
             
             gejala_tersisa = []
             for rel in penyakit_obj.gejala_rel:
@@ -193,6 +194,8 @@ def api_chat_reset():
     session.pop("tunggu_konfirmasi_gejala", None)
     session.pop("gejala_sudah_ditanya", None)
     return jsonify({"status": "success", "message": "Memori sesi dan status konfirmasi dibersihkan."})
+
+@app.route("/asesmen")
 def asesmen_manual():
     kategori_list = []
     for k_id, k_data in KATEGORI.items():
@@ -253,7 +256,7 @@ def asesmen(kategori_id):
 
 @app.route("/penyakit/<p_kode>")
 def penyakit_detail(p_kode):
-    penyakit = Penyakit.query.get(p_kode)
+    penyakit = db.session.get(Penyakit, p_kode)
     if not penyakit:
         return redirect(url_for("index"))
     return render_template("detail_penyakit.html", penyakit=penyakit)
@@ -276,7 +279,7 @@ def diagnosa():
 ADMIN_USER = "admin"
 ADMIN_PASS = "admin123"
 
-from functools import wraps
+# (wraps sudah diimport di bagian atas file)
 
 def admin_required(f):
     @wraps(f)
@@ -324,7 +327,7 @@ def admin_dashboard():
 @app.route("/admin/penyakit/<p_kode>")
 @admin_required
 def admin_detail_penyakit(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     return render_template(
         "admin_detail.html",
         p_kode=p.kode,
@@ -337,7 +340,7 @@ def admin_detail_penyakit(p_kode):
 @app.route("/admin/api/penyakit/<p_kode>", methods=["PUT"])
 @admin_required
 def api_update_penyakit(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     body = request.json
     if "nama_penyakit" in body:
         p.nama = body["nama_penyakit"].upper().strip()
@@ -376,7 +379,7 @@ def api_update_gejala(p_kode, g_kode):
 @app.route("/admin/api/penyakit/<p_kode>/gejala", methods=["POST"])
 @admin_required
 def api_tambah_gejala(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     body = request.json
     nama = body.get("nama", "").strip()
     cf = float(body.get("cf_pakar", 0.8))
@@ -387,7 +390,7 @@ def api_tambah_gejala(p_kode):
     if not (0.0 <= cf <= 1.0):
         return jsonify({"error": "CF harus antara 0.0 dan 1.0"}), 400
         
-    g = Gejala.query.get(g_kode)
+    g = db.session.get(Gejala, g_kode)
     if not g:
         g = Gejala(kode=g_kode, nama=nama)
         db.session.add(g)
@@ -440,6 +443,7 @@ def add_kata_kunci():
             db.session.add(kw)
             
         db.session.commit()
+        invalidate_keyword_cache()  # Reset cache agar kata kunci baru langsung aktif
         return redirect(url_for("admin_kata_kunci"))
     except Exception as e:
         db.session.rollback()
@@ -449,9 +453,10 @@ def add_kata_kunci():
 @admin_required
 def delete_kata_kunci(kw_id):
     try:
-        kw = KataKunci.query.get_or_404(kw_id)
+        kw = db.get_or_404(KataKunci, kw_id)
         db.session.delete(kw)
         db.session.commit()
+        invalidate_keyword_cache()  # Reset cache agar perubahan langsung efektif
         return redirect(url_for("admin_kata_kunci"))
     except Exception as e:
         db.session.rollback()
@@ -463,7 +468,7 @@ def delete_kata_kunci(kw_id):
 @admin_required
 def api_hapus_gejala(p_kode, g_kode):
     rel = PenyakitGejala.query.filter_by(penyakit_kode=p_kode, gejala_kode=g_kode).first_or_404()
-    p = Penyakit.query.get(p_kode)
+    p = db.session.get(Penyakit, p_kode)
     if len(p.gejala_rel) <= 1:
         return jsonify({"error": "Minimal satu gejala harus ada"}), 400
         
@@ -483,7 +488,7 @@ def api_tambah_penyakit():
     
     if not kode or not nama:
         return jsonify({"error": "Kode dan nama penyakit wajib diisi"}), 400
-    if Penyakit.query.get(kode):
+    if db.session.get(Penyakit, kode):
         return jsonify({"error": f"Kode {kode} sudah digunakan"}), 400
         
     p = Penyakit(
@@ -505,7 +510,7 @@ def api_tambah_penyakit():
 @app.route("/admin/api/penyakit/<p_kode>", methods=["DELETE"])
 @admin_required
 def api_hapus_penyakit(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     db.session.delete(p)
     db.session.commit()
     return jsonify({"status": "ok"})
@@ -539,7 +544,7 @@ def seed_database():
         db.session.add(p)
         
         for g_kode, g_data in p_data["gejala"].items():
-            g = Gejala.query.get(g_kode)
+            g = db.session.get(Gejala, g_kode)
             if not g:
                 g = Gejala(kode=g_kode, nama=g_data["nama"])
                 db.session.add(g)
@@ -549,6 +554,18 @@ def seed_database():
             
     db.session.commit()
     print("Database seeding completed.")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GLOBAL ERROR HANDLERS
+# ──────────────────────────────────────────────────────────────────────────────
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template("500.html"), 500
 
 
 if __name__ == "__main__":

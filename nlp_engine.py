@@ -3,6 +3,24 @@ import saka
 from sqlalchemy import or_
 from models import KataKunci
 
+# ── In-memory cache untuk kata kunci NLP ─────────────────────────────────────
+# Cache di-load sekali dari DB, dan di-invalidate saat admin mengubah kata kunci.
+_keyword_cache = None
+
+def get_keywords():
+    """Mengembalikan daftar kata kunci dari cache. Query DB jika cache kosong."""
+    global _keyword_cache
+    if _keyword_cache is None:
+        _keyword_cache = KataKunci.query.all()
+        print(f"[NLP Cache] Keyword cache dimuat: {len(_keyword_cache)} entri")
+    return _keyword_cache
+
+def invalidate_keyword_cache():
+    """Menghapus cache agar di-refresh dari DB pada request berikutnya."""
+    global _keyword_cache
+    _keyword_cache = None
+    print("[NLP Cache] Cache kata kunci di-invalidate.")
+
 def proses_pesan_chatbot(teks_pesan):
     """
     Mengurai teks mentah (curhatan) pengguna menjadi kamus probabilitas gejala (user_inputs)
@@ -26,8 +44,8 @@ def proses_pesan_chatbot(teks_pesan):
     # langsung di dalam kalimat utuh sebelum dipotong-potong oleh tokenisasi.
     # =========================================================================
     try:
-        # Ambil semua kata kunci dari database untuk dicocokkan secara fleksibel
-        semua_keyword_db = KataKunci.query.all()
+        # Gunakan cache agar tidak query DB setiap request
+        semua_keyword_db = get_keywords()
         for kw in semua_keyword_db:
             kata_kunci_db = kw.kata.lower().strip()
             

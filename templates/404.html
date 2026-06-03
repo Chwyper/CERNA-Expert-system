@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}404 — Halaman Tidak Ditemukan | CERNA{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="min-height: 60vh; align-items: center; display: flex;">
+    <div class="col-lg-6 text-center py-5">
+        <div style="font-size: 6rem; font-weight: 700; color: var(--ink-faint); line-height: 1; font-family: 'Lora', serif;">404</div>
+        <h1 class="h3 fw-bold mt-3 mb-2" style="color: var(--ink);">Halaman Tidak Ditemukan</h1>
+        <p class="text-muted mb-4">Maaf, halaman yang kamu cari tidak tersedia atau telah dipindahkan.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-sage rounded-pill px-4 py-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Kembali ke Beranda
+        </a>
+    </div>
+</div>
+{% endblock %}
