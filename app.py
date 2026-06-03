@@ -47,19 +47,36 @@ def api_chat():
     if not pesan:
         return jsonify({"balasan": "Tolong masukkan cerita keluhan Anda.", "hasil": None})
         
-    # Memanggil mesin NLP fleksibel yang barusan kita perbaiki di nlp_engine.py
+    # Memanggil mesin NLP fleksibel
     user_inputs = proses_pesan_chatbot(pesan)
     
     # ── TUGAS 2: LOGIKA FALLBACK (Jika curhatan user sama sekali tidak mengandung kata kunci gejala)
     if not user_inputs:
-        return jsonify({
-            "status": "fallback",
-            "balasan": "Halo! Aku di sini siap mendengarkan. Boleh ceritakan lebih detail apa yang sedang kamu rasakan di tubuh atau pikiranmu?", 
-            "hasil": None
-        })
+        # Check if we already have memory
+        if "gejala_terkumpul" in session and session["gejala_terkumpul"]:
+            return jsonify({
+                "status": "fallback",
+                "balasan": "Oke, saya catat. Silakan lanjutkan cerita Anda, apakah ada keluhan lain yang menyertai?", 
+                "hasil": None
+            })
+        else:
+            return jsonify({
+                "status": "fallback",
+                "balasan": "Halo! Aku di sini siap mendengarkan. Boleh ceritakan lebih detail apa yang sedang kamu rasakan di tubuh atau pikiranmu?", 
+                "hasil": None
+            })
+            
+    # Menggabungkan gejala baru dengan memori sesi sebelumnya
+    gejala_terkumpul = session.get("gejala_terkumpul", {})
+    for kode, cf in user_inputs.items():
+        # Ambil nilai CF terbesar jika gejala sudah pernah disebutkan
+        gejala_terkumpul[kode] = max(float(cf), float(gejala_terkumpul.get(kode, 0.0)))
         
-    # Menghitung hasil diagnosa menggunakan rumus Certainty Factor asli milik tim kamu
-    hasil_diagnosa = jalankan_diagnosa(user_inputs)
+    session["gejala_terkumpul"] = gejala_terkumpul
+    session.modified = True
+        
+    # Menghitung hasil diagnosa menggunakan keseluruhan gejala yang terkumpul
+    hasil_diagnosa = jalankan_diagnosa(gejala_terkumpul)
     hasil_sorted = sorted(hasil_diagnosa, key=lambda x: x['keyakinan'], reverse=True)
     
     # ── TUGAS 2: PINTU UI CARD (Jika gejala cocok dan tingkat keyakinan penyakit > 0)
@@ -82,6 +99,11 @@ def api_chat():
             "balasan": "Aku mengerti apa yang kamu rasakan, namun gejalanya masih terlalu umum. Boleh ceritakan keluhan lain secara lebih spesifik?", 
             "hasil": None
         })
+
+@app.route("/api/chat/reset", methods=["POST"])
+def api_chat_reset():
+    session.pop("gejala_terkumpul", None)
+    return jsonify({"status": "success", "message": "Memori sesi dibersihkan."})
 def asesmen_manual():
     kategori_list = []
     for k_id, k_data in KATEGORI.items():
@@ -139,6 +161,13 @@ def asesmen(kategori_id):
         penyakit_kode_list=json.dumps(penyakit_kode_list),
         penyakit_info=penyakit_info,
     )
+
+@app.route("/penyakit/<p_kode>")
+def penyakit_detail(p_kode):
+    penyakit = Penyakit.query.get(p_kode)
+    if not penyakit:
+        return redirect(url_for("index"))
+    return render_template("detail_penyakit.html", penyakit=penyakit)
 
 
 @app.route("/diagnosa", methods=["POST"])

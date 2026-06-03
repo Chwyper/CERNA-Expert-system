@@ -110,11 +110,17 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="d-flex align-items-center mb-4">
-            <a href="{{ url_for('pilih_metode') }}" class="btn btn-outline-sage rounded-circle me-3" style="width:40px; height:40px; padding:0; display:flex; align-items:center; justify-content:center;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <h2 class="h4 mb-0 fw-bold">Asisten AI CERNA</h2>
+        <div class="d-flex align-items-center mb-4 justify-content-between">
+            <div class="d-flex align-items-center">
+                <a href="{{ url_for('pilih_metode') }}" class="btn btn-outline-sage rounded-circle me-3" style="width:40px; height:40px; padding:0; display:flex; align-items:center; justify-content:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <h2 class="h4 mb-0 fw-bold">Asisten AI CERNA</h2>
+            </div>
+            <button onclick="resetChat()" class="btn btn-sm btn-outline-secondary rounded-pill" style="font-size:0.8rem; display:flex; align-items:center; gap:5px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Reset Topik
+            </button>
         </div>
 
         <div class="card-glass p-3">
@@ -159,27 +165,56 @@
     // Fungsi Tugas 2: Menampilkan Card Diagnosis secara interaktif dan dinamis
     function addDiagnosaCard(hasil) {
         const div = document.createElement('div');
-        div.className = 'diagnosa-card animate__animated animate__fadeIn';
+        div.className = 'diagnosa-card';
         div.style.alignSelf = 'flex-start';
-        div.style.width = '80%';
-        div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+        div.style.width = '85%';
+        div.style.boxShadow = 'var(--shadow-sm)';
+        div.style.background = 'var(--surface)';
+        div.style.border = '1px solid var(--border)';
+        div.style.borderRadius = 'var(--radius-md)';
+        div.style.padding = '18px';
+        div.style.marginTop = '12px';
+        div.style.animation = 'fadeUp 0.4s ease-out';
         
         div.innerHTML = `
-            <div class="d-flex align-items-center mb-2">
-                <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                <h5 class="h6 mb-0 fw-bold text-dark">Hasil Analisis Gejala</h5>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="width:10px; height:10px; border-radius:50%; background:var(--rose);"></div>
+                <h5 style="margin:0; font-size:0.85rem; font-weight:600; color:var(--ink); text-transform:uppercase; letter-spacing:0.03em;">Hasil Analisis Gejala</h5>
             </div>
-            <p class="mb-1 text-secondary" style="font-size: 0.9rem;">Indikasi Kondisi:</p>
-            <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">${hasil.nama_penyakit}</p>
-            <p class="mb-3 text-muted" style="font-size: 0.85rem;">Tingkat Kecocokan: <span class="badge bg-secondary">${hasil.keyakinan}%</span></p>
             
-            <a href="/admin/detail/${hasil.id_penyakit}" class="btn btn-sm btn-outline-danger w-100 rounded-pill fw-bold" style="font-size: 0.85rem;">
+            <p style="margin:0 0 6px 0; font-size:1.1rem; font-weight:600; color:var(--ink); font-family:'Lora', serif;">${hasil.nama_penyakit}</p>
+            
+            <p style="margin:0 0 12px 0; font-size:0.85rem; color:var(--ink-mid); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                ${hasil.deskripsi}
+            </p>
+            
+            <div style="margin-bottom:16px; font-size:0.85rem; color:var(--ink-mid); display:flex; align-items:center; justify-content:space-between;">
+                <span>Kecocokan Gejala:</span> 
+                <span style="background:var(--sage-light); color:var(--sage); padding:4px 10px; border-radius:12px; font-weight:600;">${hasil.keyakinan}%</span>
+            </div>
+            
+            <a href="/penyakit/${hasil.kode_penyakit}" style="display:block; text-align:center; padding:10px; border-radius:50px; background:transparent; border:1.5px solid var(--rose); color:var(--rose); text-decoration:none; font-weight:600; font-size:0.85rem; transition:all 0.2s;" onmouseover="this.style.background='var(--rose-bg)'" onmouseout="this.style.background='transparent'">
                 Lihat Detail Diagnosis
             </a>
         `;
         
         chatBox.appendChild(div);
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    async function resetChat() {
+        if(!confirm("Apakah Anda yakin ingin memulai topik obrolan baru? (Memori sesi akan dihapus)")) return;
+        
+        try {
+            await fetch('/api/chat/reset', { method: 'POST' });
+            chatBox.innerHTML = `
+                <div class="chat-bubble chat-bot">
+                    Baik, memori gejala sebelumnya telah dihapus. Mari mulai topik baru! Apa yang ingin Anda keluhkan sekarang?
+                </div>
+            `;
+        } catch(err) {
+            alert("Gagal mereset sesi.");
+        }
     }
 
     chatForm.addEventListener('submit', async (e) => {
