@@ -1,5 +1,6 @@
 # pyrefly: ignore [missing-import]
 import saka
+from sqlalchemy import or_
 from models import KataKunci
 
 def proses_pesan_chatbot(teks_pesan):
@@ -19,26 +20,41 @@ def proses_pesan_chatbot(teks_pesan):
     tokens = saka.tokenize(teks_normal)
     print(f"[NLP] Tokens Asli: {tokens}")
     
-    # 3. Stopword Removal (Membuang kata hubung/tidak penting)
+    # 3. Mendefinisikan Stopwords dan Kata Negasi
     stopwords_id = saka.get_stopwords('id')
-    filtered_tokens = [t for t in tokens if t not in stopwords_id]
+    kata_negasi = ["tidak", "bukan", "kurang", "gak", "enggak", "ndak", "nggak", "belum", "belom"]
     
     user_inputs = {}
     kata_dikenali = []
     
-    # 4. Heuristic Morphology & Matching (Stemming dan pencocokan ke database)
-    for token in filtered_tokens:
-        # Mencari bentuk akar dari kata tersebut
+    # 4. Heuristic Morphology, Negation Checking & Matching
+    for i, token in enumerate(tokens):
+        # A. Cek Negasi (Melihat 1 atau 2 kata sebelumnya)
+        is_negated = False
+        if i > 0 and tokens[i-1] in kata_negasi:
+            is_negated = True
+        elif i > 1 and tokens[i-2] in kata_negasi:
+            is_negated = True
+            
+        if is_negated:
+            print(f"[NLP] Kata '{token}' DIABAIKAN (Terdeteksi Negasi)")
+            continue  # Lewati kata ini sepenuhnya
+            
+        # B. Filter Stopword (Hanya jika bukan negasi yang ke-skip)
+        if token in stopwords_id:
+            continue
+            
+        # C. Mencari bentuk akar dari kata tersebut
         hasil_analisis = saka.analyze(token)
         akar_kata = hasil_analisis.get("root", token)
         
-        # 5. Database Lookup (Mencari apakah akar kata ini ada di kamus gejala kita)
-        keywords = KataKunci.query.filter_by(kata=akar_kata).all()
+        # D. Database Lookup (Mencocokkan ke database menggunakan token ATAU akar_kata)
+        keywords = KataKunci.query.filter(or_(KataKunci.kata == akar_kata, KataKunci.kata == token)).all()
         
         for kw in keywords:
             g_kode = kw.gejala_kode
             bobot = kw.bobot
-            kata_dikenali.append(akar_kata)
+            kata_dikenali.append(kw.kata) # Menyimpan kata yang benar-benar cocok
             
             # Jika satu gejala terdeteksi dari beberapa kata, ambil bobot teringgi
             if g_kode in user_inputs:
