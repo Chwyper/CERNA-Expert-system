@@ -6,11 +6,12 @@ Enhanced Flask App:
 """
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import os, json
+from functools import wraps
+import os, json, random
 from models import db, Penyakit, Gejala, PenyakitGejala, KataKunci
 from seed_data import KATEGORI
 from engine import jalankan_diagnosa
-from nlp_engine import proses_pesan_chatbot
+from nlp_engine import proses_pesan_chatbot, invalidate_keyword_cache
 
 app = Flask(__name__)
 app.secret_key = "cerna_secret_2026"   # Ganti dengan nilai random di produksi
@@ -41,47 +42,160 @@ def chatbot():
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
+    import random
     data = request.get_json()
-    pesan = data.get("pesan", "")
+    pesan_asli = data.get("pesan", "")
+    pesan = pesan_asli.lower().strip()
     
     if not pesan:
         return jsonify({"balasan": "Tolong masukkan cerita keluhan Anda.", "hasil": None})
         
-    # Memanggil mesin NLP fleksibel yang barusan kita perbaiki di nlp_engine.py
-    user_inputs = proses_pesan_chatbot(pesan)
+    # ── TAHAP 3: DETEKSI JAWABAN YA/TIDAK (STATE MACHINE KONFIRMASI)
+    konfirmasi_selesai = False
+    if "tunggu_konfirmasi_gejala" in session and session["tunggu_konfirmasi_gejala"]:
+        pending_g_kode = session["tunggu_konfirmasi_gejala"]
+        pesan_tokens = pesan.replace(".", " ").replace(",", " ").split()
+        
+        is_yes = any(w in pesan_tokens for w in ["ya", "iya", "y", "benar", "betul", "sering", "banget", "hooh"])
+        is_no = any(w in pesan_tokens for w in ["tidak", "enggak", "nggak", "bukan", "tdk", "gak", "jarang", "ngga"])
+        
+        if is_yes:
+            gejala_terkumpul = session.get("gejala_terkumpul", {})
+            gejala_terkumpul[pending_g_kode] = 0.8 # Anggap CF user = 0.8 jika "iya"
+            session["gejala_terkumpul"] = gejala_terkumpul
+            session.modified = True
+            session.pop("tunggu_konfirmasi_gejala", None)
+            user_inputs = {} # Lanjut diagnosa ulang tanpa NLP
+            konfirmasi_selesai = True
+        elif is_no:
+            session.pop("tunggu_konfirmasi_gejala", None)
+            user_inputs = {} # Lanjut diagnosa ulang dengan sisa memori
+            konfirmasi_selesai = True
+        else:
+            # Jawaban ngambang, batalkan status konfirmasi dan proses normal
+            session.pop("tunggu_konfirmasi_gejala", None)
+            user_inputs = proses_pesan_chatbot(pesan_asli)
+    else:
+        # Memanggil mesin NLP fleksibel
+        user_inputs = proses_pesan_chatbot(pesan_asli)
     
-    # ── TUGAS 2: LOGIKA FALLBACK (Jika curhatan user sama sekali tidak mengandung kata kunci gejala)
-    if not user_inputs:
+    # ── TAHAP 2: BASA-BASI AWAL (CHITCHAT) & LOGIKA FALLBACK
+    # Hanya masuk ke sini jika BUKAN sedang menyelesaikan konfirmasi ya/tidak
+    if not user_inputs and not konfirmasi_selesai and ("tunggu_konfirmasi_gejala" not in session):
+        pesan_tokens = pesan.replace(".", " ").replace(",", " ").split()
+        chitchat_words = ["halo", "hai", "p", "test", "tes", "curhat", "konsultasi", "pagi", "siang", "sore", "malam", "dok"]
+        is_chitchat = any(w in pesan_tokens for w in chitchat_words) and len(pesan) < 30
+
+        if is_chitchat:
+            balasan_list = [
+                "Halo! Aku siap mendengarkan cerita dan keluhanmu. Ada yang mengganggu fisik atau pikiran akhir-akhir ini?",
+                "Hai! Jangan ragu untuk berbagi. Apa yang sedang kamu rasakan saat ini?",
+                "Tentu, silakan curhat. Aku ada di sini untuk mendengarkan dan membantu menganalisis kondisimu. Mulai dari mana nih?"
+            ]
+            return jsonify({"status": "fallback", "balasan": random.choice(balasan_list), "hasil": None})
+            
+        # Fallback biasa jika tidak ada gejala tertangkap dan memori sesi kosong
+        if "gejala_terkumpul" in session and session["gejala_terkumpul"]:
+            return jsonify({
+                "status": "fallback",
+                "balasan": "Oke, aku catat. Silakan lanjutkan ceritamu, apakah ada keluhan lain yang menyertai?", 
+                "hasil": None
+            })
+        else:
+            return jsonify({
+                "status": "fallback",
+                "balasan": "Maaf, aku belum menangkap secara spesifik gejalanya. Bisa ceritakan lebih detail apa yang kamu rasakan secara fisik atau emosional?", 
+                "hasil": None
+            })
+            
+    # Menggabungkan gejala baru dengan memori sesi sebelumnya
+    gejala_terkumpul = session.get("gejala_terkumpul", {})
+    if user_inputs:
+        for kode, cf in user_inputs.items():
+            # Ambil nilai CF terbesar jika gejala sudah pernah disebutkan
+            gejala_terkumpul[kode] = max(float(cf), float(gejala_terkumpul.get(kode, 0.0)))
+            
+        session["gejala_terkumpul"] = gejala_terkumpul
+        session.modified = True
+
+    # Jika tidak ada gejala sama sekali (dan bukan konfirmasi), tidak ada yang bisa didiagnosa
+    if not gejala_terkumpul:
         return jsonify({
             "status": "fallback",
-            "balasan": "Halo! Aku di sini siap mendengarkan. Boleh ceritakan lebih detail apa yang sedang kamu rasakan di tubuh atau pikiranmu?", 
+            "balasan": "Maaf, aku belum punya cukup informasi untuk melakukan analisis. Boleh ceritakan keluhan yang kamu rasakan?",
             "hasil": None
         })
         
-    # Menghitung hasil diagnosa menggunakan rumus Certainty Factor asli milik tim kamu
-    hasil_diagnosa = jalankan_diagnosa(user_inputs)
+    # Menghitung hasil diagnosa menggunakan keseluruhan gejala yang terkumpul
+    hasil_diagnosa = jalankan_diagnosa(gejala_terkumpul)
     hasil_sorted = sorted(hasil_diagnosa, key=lambda x: x['keyakinan'], reverse=True)
     
-    # ── TUGAS 2: PINTU UI CARD (Jika gejala cocok dan tingkat keyakinan penyakit > 0)
+    # ── TAHAP 3: LOGIKA VERIFIKASI (SEBELUM MUNCUL KARTU)
     if hasil_sorted and hasil_sorted[0]['keyakinan'] > 0:
         prediksi = hasil_sorted[0]
+        sudah_ditanya = session.get("gejala_sudah_ditanya", [])
+        
+        # Batasi pertanyaan verifikasi maksimum 2 kali agar tidak looping
+        MAX_VERIFIKASI = 2
+        if (prediksi['keyakinan'] < 85 or prediksi['gejala_match'] < 3) and len(sudah_ditanya) < MAX_VERIFIKASI:
+            penyakit_obj = db.session.get(Penyakit, prediksi['kode_penyakit'])
+            
+            gejala_tersisa = []
+            for rel in penyakit_obj.gejala_rel:
+                if rel.gejala_kode not in gejala_terkumpul and rel.gejala_kode not in sudah_ditanya:
+                    gejala_tersisa.append((rel.gejala_kode, rel.gejala.nama))
+                    
+            if gejala_tersisa:
+                g_kode_tanya, g_nama_tanya = gejala_tersisa[0]
+                
+                # Simpan ke state
+                session["tunggu_konfirmasi_gejala"] = g_kode_tanya
+                sudah_ditanya.append(g_kode_tanya)
+                session["gejala_sudah_ditanya"] = sudah_ditanya
+                session.modified = True
+                
+                balasan_verif = (
+                    f"Aku perhatikan kamu mengalami beberapa keluhan yang mengarah ke hal tertentu. "
+                    f"Agar analisaku lebih akurat, apakah akhir-akhir ini kamu juga sering merasa <b>{g_nama_tanya.lower()}</b>?"
+                )
+                return jsonify({
+                    "status": "success",
+                    "balasan": balasan_verif,
+                    "hasil": None # Jangan munculkan kartu dulu
+                })
+
+        
+        # Jika sudah memenuhi syarat atau tidak ada sisa gejala untuk ditanya, munculkan kartu final
         balasan = (
-            f"Aku memahami kondisi sulit yang sedang kamu lalui. Dari cerita yang kamu sampaikan, "
-            f"analisis awal mendeteksi adanya indikasi yang mengarah pada <b>{prediksi['nama_penyakit']}</b>.<br><br>"
-            f"Yuk, lihat analisis hasil diagnosis lengkap kamu pada kartu di bawah ini."
+            f"Terima kasih sudah mau berbagi dan menjawab pertanyaanku. Dari semua yang kamu ceritakan, "
+            f"analisisku menunjukkan indikasi kuat ke arah <b>{prediksi['nama_penyakit']}</b>.<br><br>"
+            f"Yuk, lihat hasil diagnosis lengkap dan saran profesional untukmu pada kartu di bawah ini."
         )
+        
+        # Reset state verifikasi jika selesai
+        session.pop("tunggu_konfirmasi_gejala", None)
+        session.pop("gejala_sudah_ditanya", None)
+        
         return jsonify({
             "status": "success",
             "balasan": balasan, 
-            "hasil": prediksi  # Data hasil ini yang akan memicu munculnya Card di chatbot.html
+            "hasil": prediksi
         })
     else:
-        # Jika ada kata kunci yang ketangkap tapi nilai total kepastian penyakit dari rumus pakar = 0%
         return jsonify({
             "status": "fallback",
             "balasan": "Aku mengerti apa yang kamu rasakan, namun gejalanya masih terlalu umum. Boleh ceritakan keluhan lain secara lebih spesifik?", 
             "hasil": None
         })
+
+@app.route("/api/chat/reset", methods=["POST"])
+def api_chat_reset():
+    session.pop("gejala_terkumpul", None)
+    session.pop("tunggu_konfirmasi_gejala", None)
+    session.pop("gejala_sudah_ditanya", None)
+    return jsonify({"status": "success", "message": "Memori sesi dan status konfirmasi dibersihkan."})
+
+@app.route("/asesmen")
 def asesmen_manual():
     kategori_list = []
     for k_id, k_data in KATEGORI.items():
@@ -140,6 +254,13 @@ def asesmen(kategori_id):
         penyakit_info=penyakit_info,
     )
 
+@app.route("/penyakit/<p_kode>")
+def penyakit_detail(p_kode):
+    penyakit = db.session.get(Penyakit, p_kode)
+    if not penyakit:
+        return redirect(url_for("index"))
+    return render_template("detail_penyakit.html", penyakit=penyakit)
+
 
 @app.route("/diagnosa", methods=["POST"])
 def diagnosa():
@@ -158,7 +279,7 @@ def diagnosa():
 ADMIN_USER = "admin"
 ADMIN_PASS = "admin123"
 
-from functools import wraps
+# (wraps sudah diimport di bagian atas file)
 
 def admin_required(f):
     @wraps(f)
@@ -206,7 +327,7 @@ def admin_dashboard():
 @app.route("/admin/penyakit/<p_kode>")
 @admin_required
 def admin_detail_penyakit(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     return render_template(
         "admin_detail.html",
         p_kode=p.kode,
@@ -219,7 +340,7 @@ def admin_detail_penyakit(p_kode):
 @app.route("/admin/api/penyakit/<p_kode>", methods=["PUT"])
 @admin_required
 def api_update_penyakit(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     body = request.json
     if "nama_penyakit" in body:
         p.nama = body["nama_penyakit"].upper().strip()
@@ -258,7 +379,7 @@ def api_update_gejala(p_kode, g_kode):
 @app.route("/admin/api/penyakit/<p_kode>/gejala", methods=["POST"])
 @admin_required
 def api_tambah_gejala(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     body = request.json
     nama = body.get("nama", "").strip()
     cf = float(body.get("cf_pakar", 0.8))
@@ -269,7 +390,7 @@ def api_tambah_gejala(p_kode):
     if not (0.0 <= cf <= 1.0):
         return jsonify({"error": "CF harus antara 0.0 dan 1.0"}), 400
         
-    g = Gejala.query.get(g_kode)
+    g = db.session.get(Gejala, g_kode)
     if not g:
         g = Gejala(kode=g_kode, nama=nama)
         db.session.add(g)
@@ -322,6 +443,7 @@ def add_kata_kunci():
             db.session.add(kw)
             
         db.session.commit()
+        invalidate_keyword_cache()  # Reset cache agar kata kunci baru langsung aktif
         return redirect(url_for("admin_kata_kunci"))
     except Exception as e:
         db.session.rollback()
@@ -331,9 +453,10 @@ def add_kata_kunci():
 @admin_required
 def delete_kata_kunci(kw_id):
     try:
-        kw = KataKunci.query.get_or_404(kw_id)
+        kw = db.get_or_404(KataKunci, kw_id)
         db.session.delete(kw)
         db.session.commit()
+        invalidate_keyword_cache()  # Reset cache agar perubahan langsung efektif
         return redirect(url_for("admin_kata_kunci"))
     except Exception as e:
         db.session.rollback()
@@ -345,7 +468,7 @@ def delete_kata_kunci(kw_id):
 @admin_required
 def api_hapus_gejala(p_kode, g_kode):
     rel = PenyakitGejala.query.filter_by(penyakit_kode=p_kode, gejala_kode=g_kode).first_or_404()
-    p = Penyakit.query.get(p_kode)
+    p = db.session.get(Penyakit, p_kode)
     if len(p.gejala_rel) <= 1:
         return jsonify({"error": "Minimal satu gejala harus ada"}), 400
         
@@ -365,7 +488,7 @@ def api_tambah_penyakit():
     
     if not kode or not nama:
         return jsonify({"error": "Kode dan nama penyakit wajib diisi"}), 400
-    if Penyakit.query.get(kode):
+    if db.session.get(Penyakit, kode):
         return jsonify({"error": f"Kode {kode} sudah digunakan"}), 400
         
     p = Penyakit(
@@ -387,7 +510,7 @@ def api_tambah_penyakit():
 @app.route("/admin/api/penyakit/<p_kode>", methods=["DELETE"])
 @admin_required
 def api_hapus_penyakit(p_kode):
-    p = Penyakit.query.get_or_404(p_kode)
+    p = db.get_or_404(Penyakit, p_kode)
     db.session.delete(p)
     db.session.commit()
     return jsonify({"status": "ok"})
@@ -421,7 +544,7 @@ def seed_database():
         db.session.add(p)
         
         for g_kode, g_data in p_data["gejala"].items():
-            g = Gejala.query.get(g_kode)
+            g = db.session.get(Gejala, g_kode)
             if not g:
                 g = Gejala(kode=g_kode, nama=g_data["nama"])
                 db.session.add(g)
@@ -431,6 +554,18 @@ def seed_database():
             
     db.session.commit()
     print("Database seeding completed.")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GLOBAL ERROR HANDLERS
+# ──────────────────────────────────────────────────────────────────────────────
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template("500.html"), 500
 
 
 if __name__ == "__main__":

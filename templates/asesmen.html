@@ -3,7 +3,7 @@
 {% block title %}Asesmen — {{ kategori_info.label }}{% endblock %}
 
 {% block header_right %}
-<a href="/asesmen_manual" class="btn-ghost btn-sm" style="font-size: 0.85rem; padding: 5px 12px; border: 1px solid var(--border);">← Kembali ke Kategori</a>
+<a href="{{ url_for('asesmen_manual') }}" class="btn-ghost btn-sm" style="font-size: 0.85rem; padding: 5px 12px; border: 1px solid var(--border);">← Kembali ke Kategori</a>
 {% endblock %}
 
 {% block style %}
@@ -137,7 +137,7 @@
 
                 <div style="display:flex; gap:1rem; flex-wrap:wrap;">
                     <button class="btn-primary" onclick="startScreening()">Mulai Asesmen →</button>
-                    <a href="/asesmen_manual" class="btn-ghost">Pilih kategori lain</a>
+                    <a href="{{ url_for('asesmen_manual') }}" class="btn-ghost">Pilih kategori lain</a>
                 </div>
             </div>
         </section>
