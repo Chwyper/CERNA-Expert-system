@@ -49,27 +49,36 @@ def api_chat():
         
     user_inputs = proses_pesan_chatbot(pesan)
     
+    # ── TUGAS 2: PERBAIKI FALLBACK (Jika input tidak mengandung gejala sama sekali)
     if not user_inputs:
         return jsonify({
-            "balasan": "Saya kurang menangkap keluhan spesifik dari cerita Anda. Bisa diceritakan lebih detail mengenai gejala fisik atau emosi yang Anda rasakan?", 
+            "status": "fallback",
+            "balasan": "Halo! Aku di sini siap mendengarkan. Boleh ceritakan lebih detail apa yang sedang kamu rasakan di tubuh atau pikiranmu?", 
             "hasil": None
         })
         
     hasil_diagnosa = jalankan_diagnosa(user_inputs)
     hasil_sorted = sorted(hasil_diagnosa, key=lambda x: x['keyakinan'], reverse=True)
     
-    # Ambil hasil teratas jika keyakinannya cukup kuat (misal > 20%)
+    # ── TUGAS 2: PERBAIKI RESPONS & UI (Jika gejala terdeteksi dengan yakin)
     if hasil_sorted and hasil_sorted[0]['keyakinan'] > 20.0:
         prediksi = hasil_sorted[0]
         balasan = (
-            f"Dari cerita Anda, saya mendeteksi indikasi <b>{prediksi['nama_penyakit']}</b> "
+            f"Aku bisa merasakan ketidaknyamananmu. Dari cerita yang kamu sampaikan, "
+            f"aku mendeteksi adanya indikasi yang mengarah ke <b>{prediksi['nama_penyakit']}</b> "
             f"dengan tingkat kecocokan {prediksi['keyakinan']}%.<br><br>"
-            f"Gejala yang tertangkap: {prediksi['gejala_match']} dari {prediksi['total_gejala']} gejala umum penyakit ini."
+            f"Tetap tenang ya, mari kita lihat analisis lengkapnya pada kartu diagnosis di bawah ini."
         )
-        return jsonify({"balasan": balasan, "hasil": prediksi})
-    else:
         return jsonify({
-            "balasan": "Dari yang Anda ceritakan, gejalanya masih terlalu umum atau tidak spesifik. Boleh ceritakan keluhan lain yang lebih spesifik?", 
+            "status": "success",
+            "balasan": balasan, 
+            "hasil": prediksi
+        })
+    else:
+        # Jika ada kata yang masuk tapi belum cukup spesifik untuk mendiagnosis
+        return jsonify({
+            "status": "fallback",
+            "balasan": "Aku memahami apa yang kamu lalui, tapi gejalanya masih agak umum. Boleh ceritakan keluhan lain secara lebih spesifik agar aku bisa membantumu lebih baik?", 
             "hasil": None
         })
 def asesmen_manual():

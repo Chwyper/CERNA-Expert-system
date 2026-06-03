@@ -156,6 +156,32 @@
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+    // Fungsi Tugas 2: Menampilkan Card Diagnosis secara interaktif dan dinamis
+    function addDiagnosaCard(hasil) {
+        const div = document.createElement('div');
+        div.className = 'diagnosa-card animate__animated animate__fadeIn';
+        div.style.alignSelf = 'flex-start';
+        div.style.width = '80%';
+        div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+        
+        div.innerHTML = `
+            <div class="d-flex align-items-center mb-2">
+                <div class="bg-danger rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                <h5 class="h6 mb-0 fw-bold text-dark">Hasil Analisis Gejala</h5>
+            </div>
+            <p class="mb-1 text-secondary" style="font-size: 0.9rem;">Indikasi Kondisi:</p>
+            <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">${hasil.nama_penyakit}</p>
+            <p class="mb-3 text-muted" style="font-size: 0.85rem;">Tingkat Kecocokan: <span class="badge bg-secondary">${hasil.keyakinan}%</span></p>
+            
+            <a href="/admin/detail/${hasil.id_penyakit}" class="btn btn-sm btn-outline-danger w-100 rounded-pill fw-bold" style="font-size: 0.85rem;">
+                Lihat Detail Diagnosis
+            </a>
+        `;
+        
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const text = userInput.value.trim();
@@ -181,11 +207,12 @@
             // Hilangkan loading
             typingIndicator.style.display = 'none';
             
+            // Tampilkan balasan empati chatbot
             addBubble(data.balasan, false);
             
-            // Jika ada hasil diagnosa, beri tombol untuk melihat detail (opsional)
-            if(data.hasil) {
-                // Di masa depan bisa dilink ke halaman detail
+            // Pemicu tampilan desain Card jika diagnosis terdeteksi
+            if(data.status === "success" && data.hasil) {
+                addDiagnosaCard(data.hasil);
             }
             
         } catch(err) {
