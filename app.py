@@ -45,11 +45,12 @@ def api_chat():
     pesan = data.get("pesan", "")
     
     if not pesan:
-        return jsonify({"balasan": "Tolong ceritakan apa yang Anda rasakan.", "hasil": None})
+        return jsonify({"balasan": "Tolong masukkan cerita keluhan Anda.", "hasil": None})
         
+    # Memanggil mesin NLP fleksibel yang barusan kita perbaiki di nlp_engine.py
     user_inputs = proses_pesan_chatbot(pesan)
     
-    # ── TUGAS 2: PERBAIKI FALLBACK (Jika input tidak mengandung gejala sama sekali)
+    # ── TUGAS 2: LOGIKA FALLBACK (Jika curhatan user sama sekali tidak mengandung kata kunci gejala)
     if not user_inputs:
         return jsonify({
             "status": "fallback",
@@ -57,28 +58,28 @@ def api_chat():
             "hasil": None
         })
         
+    # Menghitung hasil diagnosa menggunakan rumus Certainty Factor asli milik tim kamu
     hasil_diagnosa = jalankan_diagnosa(user_inputs)
     hasil_sorted = sorted(hasil_diagnosa, key=lambda x: x['keyakinan'], reverse=True)
     
-    # ── TUGAS 2: PERBAIKI RESPONS & UI (Jika gejala terdeteksi dengan yakin)
-    if hasil_sorted and hasil_sorted[0]['keyakinan'] > 20.0:
+    # ── TUGAS 2: PINTU UI CARD (Jika gejala cocok dan tingkat keyakinan penyakit > 0)
+    if hasil_sorted and hasil_sorted[0]['keyakinan'] > 0:
         prediksi = hasil_sorted[0]
         balasan = (
-            f"Aku bisa merasakan ketidaknyamananmu. Dari cerita yang kamu sampaikan, "
-            f"aku mendeteksi adanya indikasi yang mengarah ke <b>{prediksi['nama_penyakit']}</b> "
-            f"dengan tingkat kecocokan {prediksi['keyakinan']}%.<br><br>"
-            f"Tetap tenang ya, mari kita lihat analisis lengkapnya pada kartu diagnosis di bawah ini."
+            f"Aku memahami kondisi sulit yang sedang kamu lalui. Dari cerita yang kamu sampaikan, "
+            f"analisis awal mendeteksi adanya indikasi yang mengarah pada <b>{prediksi['nama_penyakit']}</b>.<br><br>"
+            f"Yuk, lihat analisis hasil diagnosis lengkap kamu pada kartu di bawah ini."
         )
         return jsonify({
             "status": "success",
             "balasan": balasan, 
-            "hasil": prediksi
+            "hasil": prediksi  # Data hasil ini yang akan memicu munculnya Card di chatbot.html
         })
     else:
-        # Jika ada kata yang masuk tapi belum cukup spesifik untuk mendiagnosis
+        # Jika ada kata kunci yang ketangkap tapi nilai total kepastian penyakit dari rumus pakar = 0%
         return jsonify({
             "status": "fallback",
-            "balasan": "Aku memahami apa yang kamu lalui, tapi gejalanya masih agak umum. Boleh ceritakan keluhan lain secara lebih spesifik agar aku bisa membantumu lebih baik?", 
+            "balasan": "Aku mengerti apa yang kamu rasakan, namun gejalanya masih terlalu umum. Boleh ceritakan keluhan lain secara lebih spesifik?", 
             "hasil": None
         })
 def asesmen_manual():

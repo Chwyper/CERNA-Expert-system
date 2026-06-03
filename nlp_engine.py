@@ -8,15 +8,45 @@ def proses_pesan_chatbot(teks_pesan):
     Mengurai teks mentah (curhatan) pengguna menjadi kamus probabilitas gejala (user_inputs)
     yang kompatibel dengan algoritma Certainty Factor lama kita.
     
-    Alur: Normalisasi Slang -> Tokenisasi -> Hapus Stopword -> Cari Akar Kata -> Cocokkan ke DB.
+    Alur BARU: Normalisasi Slang -> PENCARIAN FRASE UTUH -> Tokenisasi Kata Tunggal -> Cocokkan ke DB.
     """
-    
+    if not teks_pesan:
+        return {}
+
     # 1. Slang Normalization & Cleansing (Menerjemahkan bahasa gaul)
-    # Contoh: "aku lg males bgt" -> "saya sedang malas banget"
     teks_normal = saka.normalize(teks_pesan.lower())
     print(f"[NLP] Teks Ternormalisasi: {teks_normal}")
     
-    # 2. Tokenization (Memecah menjadi deretan kata)
+    user_inputs = {}
+    kata_dikenali = []
+
+    # =========================================================================
+    # ── LOGIKA BARU: PENCARIAN FRASE UTUH (AGAR CHATBOT AUTO PINTAR)
+    # Langkah ini mencari frase gaul panjang (misal: "ga nafsu makan", "deg-degan") 
+    # langsung di dalam kalimat utuh sebelum dipotong-potong oleh tokenisasi.
+    # =========================================================================
+    try:
+        # Ambil semua kata kunci dari database untuk dicocokkan secara fleksibel
+        semua_keyword_db = KataKunci.query.all()
+        for kw in semua_keyword_db:
+            kata_kunci_db = kw.kata.lower().strip()
+            
+            # Jika kata/frase dari DB ternyata tertulis di dalam curhatan user
+            if kata_kunci_db in teks_normal:
+                g_kode = kw.gejala_kode
+                bobot = kw.bobot
+                kata_dikenali.append(kw.kata)
+                
+                # Masukkan ke user_inputs, ambil bobot tertinggi jika ada yang kembar
+                if g_kode in user_inputs:
+                    user_inputs[g_kode] = max(user_inputs[g_kode], bobot)
+                else:
+                    user_inputs[g_kode] = bobot
+    except Exception as e:
+        print(f"[NLP Error] Gagal mencocokkan frase utuh: {e}")
+    # =========================================================================
+
+    # 2. Tokenization (Tetap jalankan fitur bawaan tim kamu untuk kata tunggal)
     tokens = saka.tokenize(teks_normal)
     print(f"[NLP] Tokens Asli: {tokens}")
     
@@ -24,10 +54,7 @@ def proses_pesan_chatbot(teks_pesan):
     stopwords_id = saka.get_stopwords('id')
     kata_negasi = ["tidak", "bukan", "kurang", "gak", "enggak", "ndak", "nggak", "belum", "belom"]
     
-    user_inputs = {}
-    kata_dikenali = []
-    
-    # 4. Heuristic Morphology, Negation Checking & Matching
+    # 4. Heuristic Morphology, Negation Checking & Matching (Fitur Asli Tim)
     for i, token in enumerate(tokens):
         # A. Cek Negasi (Melihat 1 atau 2 kata sebelumnya)
         is_negated = False
@@ -40,7 +67,7 @@ def proses_pesan_chatbot(teks_pesan):
             print(f"[NLP] Kata '{token}' DIABAIKAN (Terdeteksi Negasi)")
             continue  # Lewati kata ini sepenuhnya
             
-        # B. Filter Stopword (Hanya jika bukan negasi yang ke-skip)
+        # B. Filter Stopword
         if token in stopwords_id:
             continue
             
@@ -48,21 +75,20 @@ def proses_pesan_chatbot(teks_pesan):
         hasil_analisis = saka.analyze(token)
         akar_kata = hasil_analisis.get("root", token)
         
-        # D. Database Lookup (Mencocokkan ke database menggunakan token ATAU akar_kata)
+        # D. Database Lookup untuk Kata Tunggal (Jika belum ketangkap di pencarian frase atas)
         keywords = KataKunci.query.filter(or_(KataKunci.kata == akar_kata, KataKunci.kata == token)).all()
         
         for kw in keywords:
             g_kode = kw.gejala_kode
             bobot = kw.bobot
-            kata_dikenali.append(kw.kata) # Menyimpan kata yang benar-benar cocok
             
-            # Jika satu gejala terdeteksi dari beberapa kata, ambil bobot teringgi
-            if g_kode in user_inputs:
-                user_inputs[g_kode] = max(user_inputs[g_kode], bobot)
-            else:
+            if g_kode not in user_inputs:
+                kata_dikenali.append(kw.kata)
                 user_inputs[g_kode] = bobot
+            else:
+                user_inputs[g_kode] = max(user_inputs[g_kode], bobot)
                 
-    print(f"[NLP] Akar Kata Terdeteksi di DB: {list(set(kata_dikenali))}")
-    print(f"[NLP] Hasil Konversi (user_inputs): {user_inputs}")
+    print(f"[NLP] Akar Kata/Frase Terdeteksi di DB: {list(set(kata_dikenali))}")
+    print(f"[NLP] Hasil Konversi Akhir (user_inputs): {user_inputs}")
     
     return user_inputs
