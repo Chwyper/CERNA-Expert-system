@@ -321,5 +321,22 @@ def main():
     print(f" AKURASI KESELURUHAN: {accuracy:.1f}% ({passed_scenarios}/{total_scenarios} Skenario Lulus)")
     print("="*65 + "\n")
 
+    # === FUNGSI EXPORT JSON ===
+    export_data = {
+        "summary": {
+            "total_scenarios": total_scenarios,
+            "passed_scenarios": passed_scenarios,
+            "accuracy_percent": round(accuracy, 2)
+        },
+        "details": results
+    }
+    
+    try:
+        with open("test_results.json", "w", encoding="utf-8") as f:
+            json.dump(export_data, f, indent=4)
+        print("[SUCCESS] Hasil pengujian berhasil diekspor ke: test_results.json\n")
+    except Exception as e:
+        print(f"[ERROR] Gagal mengekspor hasil JSON: {e}\n")
+
 if __name__ == "__main__":
     main()

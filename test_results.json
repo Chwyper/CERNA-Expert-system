@@ -1,0 +1,219 @@
+{
+    "summary": {
+        "total_scenarios": 30,
+        "passed_scenarios": 26,
+        "accuracy_percent": 86.67
+    },
+    "details": [
+        {
+            "Skenario": "SKENARIO 1",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 2",
+            "Status": "LULUS",
+            "Pass": 3,
+            "Fail": 0,
+            "Total": 3
+        },
+        {
+            "Skenario": "SKENARIO 3",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 4",
+            "Status": "LULUS",
+            "Pass": 3,
+            "Fail": 0,
+            "Total": 3
+        },
+        {
+            "Skenario": "SKENARIO 5",
+            "Status": "LULUS",
+            "Pass": 3,
+            "Fail": 0,
+            "Total": 3
+        },
+        {
+            "Skenario": "SKENARIO 6",
+            "Status": "LULUS",
+            "Pass": 3,
+            "Fail": 0,
+            "Total": 3
+        },
+        {
+            "Skenario": "SKENARIO 7",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 8",
+            "Status": "GAGAL",
+            "Pass": 1,
+            "Fail": 1,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 9",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 10",
+            "Status": "GAGAL",
+            "Pass": 1,
+            "Fail": 1,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 11",
+            "Status": "GAGAL",
+            "Pass": 1,
+            "Fail": 1,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 12",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 13",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 14",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 15",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 16",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 17",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 18",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 19",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 20",
+            "Status": "LULUS",
+            "Pass": 3,
+            "Fail": 0,
+            "Total": 3
+        },
+        {
+            "Skenario": "SKENARIO 21",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 22",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 23",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 24",
+            "Status": "LULUS",
+            "Pass": 2,
+            "Fail": 0,
+            "Total": 2
+        },
+        {
+            "Skenario": "SKENARIO 25",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 26",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 27",
+            "Status": "GAGAL",
+            "Pass": 0,
+            "Fail": 1,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 28",
+            "Status": "LULUS",
+            "Pass": 1,
+            "Fail": 0,
+            "Total": 1
+        },
+        {
+            "Skenario": "SKENARIO 29",
+            "Status": "LULUS",
+            "Pass": 3,
+            "Fail": 0,
+            "Total": 3
+        },
+        {
+            "Skenario": "SKENARIO 30",
+            "Status": "LULUS",
+            "Pass": 5,
+            "Fail": 0,
+            "Total": 5
+        }
+    ]
+}

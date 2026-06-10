@@ -5,68 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kamus NLP — Admin CERNA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #F0EEEb; --surface: #FFFFFF; --border: #E5E0D8; --border-2: #D0C9BF;
-            --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90;
+            --sage: #4A7C6F; --sage-light: #EBF4F1; --sage-mid: #6A9E90; --sage-dark: #3a6358;
             --ink: #1E1E1E; --ink-mid: #4A4845; --ink-muted: #8C8882; --ink-faint: #C8C4BE;
             --amber: #B8860B; --amber-bg: #FEF3CD;
-            --red: #C0392B; --red-bg: #FDEDEC;
-            --radius-md: 12px; --radius-lg: 18px;
+            --red: #C0392B; --red-bg: #FDEDEC; --red-mid: #e74c3c;
+            --blue: #2980B9; --blue-bg: #EBF5FB;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-xl: 22px;
+            --shadow-sm: 0 1px 3px rgba(30,24,18,.07);
+            --shadow-md: 0 4px 16px rgba(30,24,18,.10);
+            --shadow-lg: 0 12px 40px rgba(30,24,18,.14);
+            --transition: all .2s cubic-bezier(.4,0,.2,1);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-mid); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-        /* SIDEBAR */
+        /* ── SIDEBAR ─────────────────────────────────── */
         .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 230px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1.25rem; display: flex; flex-direction: column; z-index: 100; }
         .sidebar-logo { display: flex; align-items: center; gap: 9px; font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem; }
         .logo-mark { width: 28px; height: 28px; background: var(--sage); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .logo-mark svg { width: 15px; height: 15px; fill: white; }
         .sidebar-sub { font-size: .72rem; color: var(--ink-faint); font-weight: 500; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2rem; padding-left: 37px; }
         .nav-label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); padding: 0 .6rem; margin-bottom: .4rem; margin-top: 1rem; }
-        .nav-item { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; border-radius: 9px; font-size: .87rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; transition: all .15s; }
+        .nav-item { display: flex; align-items: center; gap: .6rem; padding: .55rem .75rem; border-radius: 9px; font-size: .87rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; transition: var(--transition); }
         .nav-item:hover { background: var(--bg); color: var(--ink); }
         .nav-item.active { background: var(--sage-light); color: var(--sage); font-weight: 600; }
-        .nav-item svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-item svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; flex-shrink: 0; }
         .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem; }
-        .sidebar-user { font-size: .8rem; color: var(--ink-muted); margin-bottom: .75rem; }
-        .sidebar-user strong { display: block; color: var(--ink); font-size: .85rem; }
 
-        /* MAIN */
-        .main { margin-left: 230px; padding: 2rem 2.5rem; }
+        /* ── MAIN LAYOUT ────────────────────────────── */
+        .main { margin-left: 230px; padding: 2.5rem 2.5rem 4rem; max-width: 1100px; }
         .page-header { margin-bottom: 2rem; }
-        .page-header h1 { font-family: 'Lora', serif; font-size: 2rem; font-weight: 600; color: var(--ink); margin-bottom: .3rem; }
+        .page-header h1 { font-family: 'Lora', serif; font-size: 2rem; font-weight: 700; color: var(--ink); margin-bottom: .35rem; }
         .page-header p { font-size: .88rem; color: var(--ink-muted); }
 
-        /* TABLE */
-        .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-        .table-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); }
-        .table-header h3 { font-size: 1rem; font-weight: 600; color: var(--ink); }
+        /* ── TOOLBAR ─────────────────────────────────── */
+        .toolbar { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .search-box { display: flex; align-items: center; gap: .5rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: .55rem 1rem; flex: 1; min-width: 220px; transition: var(--transition); }
+        .search-box:focus-within { border-color: var(--sage-mid); box-shadow: 0 0 0 3px rgba(74,124,111,.1); }
+        .search-box svg { width: 16px; height: 16px; stroke: var(--ink-faint); flex-shrink: 0; }
+        .search-box input { border: none; outline: none; background: transparent; font-family: 'Inter', sans-serif; font-size: .88rem; color: var(--ink); width: 100%; }
+        .search-box input::placeholder { color: var(--ink-faint); }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); padding: .65rem 1.5rem; background: var(--bg); border-bottom: 1px solid var(--border); }
-        td { padding: .85rem 1.5rem; border-bottom: 1px solid var(--border); font-size: .88rem; vertical-align: middle; }
-        tr:hover td { background: var(--bg); }
+        .filter-group { display: flex; gap: .5rem; }
+        .filter-btn { padding: .5rem .9rem; font-size: .8rem; font-weight: 500; border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--ink-mid); cursor: pointer; transition: var(--transition); }
+        .filter-btn.active, .filter-btn:hover { background: var(--sage-light); border-color: var(--sage-mid); color: var(--sage); }
 
-        .btn-tbl { display: inline-flex; align-items: center; gap: 4px; font-size: .78rem; font-weight: 500; font-family: 'Inter', sans-serif; padding: 4px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-mid); text-decoration: none; cursor: pointer; transition: all .15s; }
-        .btn-tbl:hover { background: var(--bg); border-color: var(--border-2); }
-        .btn-tbl.primary { background: var(--sage); color: white; border-color: var(--sage); }
-        .btn-tbl.primary:hover { background: var(--sage-mid); }
-        .btn-tbl.danger { color: var(--red); border-color: rgba(192,57,43,.25); }
-        .btn-tbl.danger:hover { background: var(--red-bg); }
+        .btn-primary { display: inline-flex; align-items: center; gap: .4rem; padding: .6rem 1.2rem; font-size: .85rem; font-weight: 600; font-family: 'Inter', sans-serif; background: var(--sage); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); text-decoration: none; }
+        .btn-primary:hover { background: var(--sage-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-primary svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 
-        /* MODAL */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(30,24,18,.35); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; }
+        /* ── STATS ROW ────────────────────────────────── */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; display: flex; align-items: center; gap: .85rem; }
+        .stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stat-icon svg { width: 18px; height: 18px; }
+        .stat-icon.green { background: var(--sage-light); color: var(--sage); }
+        .stat-icon.amber { background: var(--amber-bg); color: var(--amber); }
+        .stat-icon.blue { background: var(--blue-bg); color: var(--blue); }
+        .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--ink); line-height: 1; }
+        .stat-label { font-size: .75rem; color: var(--ink-muted); margin-top: 2px; }
+
+        /* ── ACCORDION CARDS ──────────────────────────── */
+        .accordion-list { display: flex; flex-direction: column; gap: .75rem; }
+
+        .gejala-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition); }
+        .gejala-card:hover { border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+        .gejala-card.expanded { border-color: var(--sage-mid); box-shadow: 0 4px 20px rgba(74,124,111,.12); }
+
+        .card-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; cursor: pointer; user-select: none; }
+        .card-header:hover { background: rgba(240,238,235,.5); }
+
+        .gejala-badge { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 38px; background: var(--sage-light); border-radius: var(--radius-sm); font-size: .72rem; font-weight: 700; color: var(--sage); letter-spacing: .02em; flex-shrink: 0; }
+
+        .card-title { flex: 1; }
+        .card-title h3 { font-size: .92rem; font-weight: 600; color: var(--ink); margin-bottom: .15rem; }
+        .card-title span { font-size: .78rem; color: var(--ink-muted); }
+
+        .card-meta { display: flex; align-items: center; gap: .5rem; }
+        .kw-count-pill { font-size: .72rem; font-weight: 600; padding: .25rem .65rem; border-radius: 20px; background: var(--sage-light); color: var(--sage); white-space: nowrap; }
+
+        .chevron { width: 18px; height: 18px; stroke: var(--ink-faint); flex-shrink: 0; transition: transform .25s ease; }
+        .gejala-card.expanded .chevron { transform: rotate(180deg); stroke: var(--sage); }
+
+        /* ── KEYWORD DETAIL PANEL ──────────────────────── */
+        .card-body { display: none; border-top: 1px solid var(--border); padding: 1.25rem; background: #FAFAF8; }
+        .gejala-card.expanded .card-body { display: block; }
+
+        .kw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+
+        .kw-chip { display: flex; align-items: center; justify-content: space-between; gap: .5rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: .55rem .8rem; transition: var(--transition); }
+        .kw-chip:hover { border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+        .kw-chip-word { font-size: .85rem; font-weight: 500; color: var(--ink); font-family: 'Inter', monospace; }
+        .kw-chip-right { display: flex; align-items: center; gap: .4rem; }
+        .kw-bobot { font-size: .72rem; font-weight: 600; padding: .2rem .45rem; border-radius: 6px; background: var(--sage-light); color: var(--sage-dark); }
+        .kw-del-btn { width: 22px; height: 22px; border: none; background: transparent; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink-faint); transition: var(--transition); padding: 0; }
+        .kw-del-btn:hover { background: var(--red-bg); color: var(--red); }
+        .kw-del-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        .card-actions { display: flex; align-items: center; justify-content: space-between; padding-top: .9rem; border-top: 1px solid var(--border); margin-top: .25rem; }
+        .card-actions-left { font-size: .78rem; color: var(--ink-muted); }
+        .btn-add-kw { display: inline-flex; align-items: center; gap: .35rem; padding: .45rem .9rem; font-size: .8rem; font-weight: 600; font-family: 'Inter', sans-serif; background: var(--sage); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); }
+        .btn-add-kw:hover { background: var(--sage-dark); }
+        .btn-add-kw svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        /* ── EMPTY STATE ──────────────────────────────── */
+        .empty-state { text-align: center; padding: 3rem 1rem; }
+        .empty-icon { width: 60px; height: 60px; background: var(--sage-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+        .empty-icon svg { width: 28px; height: 28px; stroke: var(--sage); fill: none; }
+        .empty-state h3 { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: .4rem; }
+        .empty-state p { font-size: .85rem; color: var(--ink-muted); }
+
+        /* ── MODAL ────────────────────────────────────── */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(30,24,18,.4); z-index: 500; align-items: center; justify-content: center; padding: 1.5rem; backdrop-filter: blur(4px); }
         .modal-overlay.open { display: flex; }
-        .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(30,24,18,.15); }
-        .modal h3 { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); margin-bottom: 1.5rem; }
-        .field { margin-bottom: 1rem; }
-        .field label { display: block; font-size: .8rem; font-weight: 600; color: var(--ink); margin-bottom: .4rem; }
-        .field input, .field select { width: 100%; padding: .65rem .9rem; font-family: 'Inter', sans-serif; font-size: .88rem; border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg); color: var(--ink); outline: none; }
-        .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
-        .btn-cancel { padding: .6rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; cursor: pointer; }
-        .btn-save { padding: .6rem 1.4rem; border-radius: var(--radius-md); border: none; background: var(--sage); color: white; font-weight: 600; cursor: pointer; }
+        .modal { background: var(--surface); border-radius: var(--radius-xl); padding: 2rem; width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); animation: slideUp .2s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+        .modal-header h3 { font-family: 'Lora', serif; font-size: 1.4rem; font-weight: 700; color: var(--ink); }
+        .modal-close { width: 32px; height: 32px; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink-muted); transition: var(--transition); }
+        .modal-close:hover { background: var(--bg); color: var(--ink); }
+        .modal-close svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+        .field { margin-bottom: 1.1rem; }
+        .field label { display: block; font-size: .8rem; font-weight: 600; color: var(--ink); margin-bottom: .45rem; }
+        .field input, .field select { width: 100%; padding: .7rem 1rem; font-family: 'Inter', sans-serif; font-size: .88rem; border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--bg); color: var(--ink); outline: none; transition: var(--transition); }
+        .field input:focus, .field select:focus { border-color: var(--sage-mid); background: var(--surface); box-shadow: 0 0 0 3px rgba(74,124,111,.1); }
+        .field-hint { font-size: .75rem; color: var(--ink-muted); margin-top: .3rem; }
+        .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+        .btn-cancel { padding: .65rem 1.2rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: transparent; cursor: pointer; font-family: 'Inter', sans-serif; font-size: .85rem; font-weight: 500; color: var(--ink-mid); transition: var(--transition); }
+        .btn-cancel:hover { background: var(--bg); }
+        .btn-save { padding: .65rem 1.4rem; border-radius: var(--radius-md); border: none; background: var(--sage); color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: .85rem; cursor: pointer; transition: var(--transition); }
+        .btn-save:hover { background: var(--sage-dark); }
+
+        /* Hidden delete form */
+        .del-form { display: none; }
+
+        /* Search highlight */
+        .hidden-card { display: none !important; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -79,7 +160,6 @@
             CERNA
         </div>
         <div class="sidebar-sub">Panel Admin</div>
-
         <div class="nav-label">Menu</div>
         <a href="/admin" class="nav-item">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -103,53 +183,126 @@
 <!-- MAIN -->
 <main class="main">
     <div class="page-header">
-        <h1>Kamus NLP (Kata Kunci)</h1>
-        <p>Kelola perbendaharaan kata chatbot agar lebih pintar mengenali gejala pengguna.</p>
+        <h1>Kamus NLP</h1>
+        <p>Kelola kata kunci per gejala agar chatbot lebih cerdas mengenali keluhan pengguna.</p>
     </div>
 
-    <div class="table-wrap">
-        <div class="table-header">
-            <h3>Daftar Kata Kunci</h3>
-            <button class="btn-tbl primary" onclick="document.getElementById('modalAdd').classList.add('open')">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Tambah Kata
-            </button>
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+                <div class="stat-val">{{ grouped | length }}</div>
+                <div class="stat-label">Gejala Terdaftar</div>
+            </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Gejala Terkait</th>
-                    <th>Akar Kata (Keyword)</th>
-                    <th>Bobot CF</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for kw in kata_kunci_list %}
-                <tr>
-                    <td><strong>{{ kw.gejala.kode }}</strong> - {{ kw.gejala.nama }}</td>
-                    <td>{{ kw.kata }}</td>
-                    <td>{{ kw.bobot }}</td>
-                    <td>
-                        <form action="/admin/kata_kunci/delete/{{ kw.id }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus kata kunci ini?');">
-                            <button type="submit" class="btn-tbl danger">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="stat-card">
+            <div class="stat-icon amber">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            </div>
+            <div>
+                <div class="stat-val">{{ kata_kunci_list | length }}</div>
+                <div class="stat-label">Total Kata Kunci</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <div>
+                <div class="stat-val" id="avg-kw">
+                    {% if grouped | length > 0 %}{{ (kata_kunci_list | length / grouped | length) | round(1) }}{% else %}0{% endif %}
+                </div>
+                <div class="stat-label">Rata-rata Kata/Gejala</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Cari gejala atau kata kunci…" oninput="filterCards()">
+        </div>
+        <button class="filter-btn active" id="filter-all" onclick="setFilter('all', this)">Semua</button>
+        <button class="filter-btn" id="filter-rich" onclick="setFilter('rich', this)">Banyak Kata (&ge;5)</button>
+        <button class="filter-btn" id="filter-poor" onclick="setFilter('poor', this)">Sedikit Kata (&lt;3)</button>
+        <button class="btn-primary" onclick="openAddModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Kata
+        </button>
+    </div>
+
+    <!-- Accordion List -->
+    <div class="accordion-list" id="accordionList">
+        {% for g_kode, g_data in grouped.items() %}
+        <div class="gejala-card" id="card-{{ g_kode }}" data-kode="{{ g_kode }}" data-nama="{{ g_data.nama }}" data-count="{{ g_data.kata_kunci | length }}">
+            <div class="card-header" onclick="toggleCard('{{ g_kode }}')">
+                <div class="gejala-badge">{{ g_kode }}</div>
+                <div class="card-title">
+                    <h3>{{ g_data.nama }}</h3>
+                    <span>Kode Gejala: {{ g_kode }}</span>
+                </div>
+                <div class="card-meta">
+                    <span class="kw-count-pill">{{ g_data.kata_kunci | length }} kata</span>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="kw-grid">
+                    {% for kw in g_data.kata_kunci %}
+                    <div class="kw-chip" id="chip-{{ kw.id }}">
+                        <span class="kw-chip-word">{{ kw.kata }}</span>
+                        <div class="kw-chip-right">
+                            <span class="kw-bobot">{{ kw.bobot }}</span>
+                            <button class="kw-del-btn" onclick="deleteKw({{ kw.id }}, '{{ kw.kata }}')" title="Hapus kata kunci ini">
+                                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="card-actions">
+                    <span class="card-actions-left">{{ g_data.kata_kunci | length }} kata kunci aktif untuk gejala ini</span>
+                    <button class="btn-add-kw" onclick="openAddModal('{{ g_kode }}')">
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Tambah Kata
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <h3>Kamus masih kosong</h3>
+            <p>Tambah kata kunci pertama untuk mulai melatih chatbot CERNA.</p>
+        </div>
+        {% endfor %}
     </div>
 </main>
+
+<!-- Hidden delete forms -->
+{% for kw in kata_kunci_list %}
+<form class="del-form" id="del-{{ kw.id }}" action="/admin/kata_kunci/delete/{{ kw.id }}" method="POST"></form>
+{% endfor %}
 
 <!-- MODAL ADD -->
 <div class="modal-overlay" id="modalAdd">
     <div class="modal">
-        <h3>Tambah Kata Kunci</h3>
+        <div class="modal-header">
+            <h3>Tambah Kata Kunci</h3>
+            <button class="modal-close" onclick="closeAddModal()">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
         <form action="/admin/kata_kunci/add" method="POST">
             <div class="field">
                 <label>Pilih Gejala</label>
-                <select name="gejala_kode" required>
+                <select name="gejala_kode" id="modalGejalaSelect" required>
                     <option value="">-- Pilih Gejala --</option>
                     {% for g in gejala_list %}
                     <option value="{{ g.kode }}">[{{ g.kode }}] {{ g.nama }}</option>
@@ -157,20 +310,94 @@
                 </select>
             </div>
             <div class="field">
-                <label>Akar Kata (Satu kata baku/dasar)</label>
-                <input type="text" name="kata" placeholder="Misal: pusing" required>
+                <label>Kata Kunci (Satu kata baku/dasar)</label>
+                <input type="text" name="kata" id="modalKataInput" placeholder="Misal: pusing, sesak, lesu" required>
+                <div class="field-hint">Gunakan kata dasar tanpa imbuhan. Fuzzy matching akan otomatis menangani variasi typo.</div>
             </div>
             <div class="field">
-                <label>Bobot (0.0 - 1.0)</label>
-                <input type="number" step="0.01" name="bobot" value="0.8" required>
+                <label>Bobot Kepercayaan (0.0 – 1.0)</label>
+                <input type="number" step="0.01" min="0.1" max="1.0" name="bobot" value="0.8" required>
+                <div class="field-hint">Nilai 0.8 = cukup yakin, 0.9–1.0 = sangat khas untuk gejala ini.</div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="document.getElementById('modalAdd').classList.remove('open')">Batal</button>
+                <button type="button" class="btn-cancel" onclick="closeAddModal()">Batal</button>
                 <button type="submit" class="btn-save">Simpan Kata</button>
             </div>
         </form>
     </div>
 </div>
 
+<script>
+    // ── ACCORDION ──────────────────────────────────────
+    function toggleCard(kode) {
+        const card = document.getElementById('card-' + kode);
+        card.classList.toggle('expanded');
+    }
+
+    // ── MODAL ──────────────────────────────────────────
+    function openAddModal(preselect = null) {
+        document.getElementById('modalAdd').classList.add('open');
+        if (preselect) {
+            document.getElementById('modalGejalaSelect').value = preselect;
+            document.getElementById('modalKataInput').focus();
+        } else {
+            document.getElementById('modalGejalaSelect').value = '';
+        }
+    }
+    function closeAddModal() {
+        document.getElementById('modalAdd').classList.remove('open');
+    }
+    document.getElementById('modalAdd').addEventListener('click', function(e) {
+        if (e.target === this) closeAddModal();
+    });
+
+    // ── DELETE ─────────────────────────────────────────
+    function deleteKw(id, kata) {
+        if (!confirm('Hapus kata kunci "' + kata + '"?')) return;
+        document.getElementById('del-' + id).submit();
+    }
+
+    // ── SEARCH ─────────────────────────────────────────
+    let currentFilter = 'all';
+
+    function filterCards() {
+        const q = document.getElementById('searchInput').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.gejala-card');
+        cards.forEach(card => {
+            const kode = card.dataset.kode.toLowerCase();
+            const nama = card.dataset.nama.toLowerCase();
+            const count = parseInt(card.dataset.count);
+            const chips = Array.from(card.querySelectorAll('.kw-chip-word')).map(el => el.textContent.toLowerCase());
+            
+            const matchSearch = !q || kode.includes(q) || nama.includes(q) || chips.some(c => c.includes(q));
+            let matchFilter = true;
+            if (currentFilter === 'rich') matchFilter = count >= 5;
+            if (currentFilter === 'poor') matchFilter = count < 3;
+
+            card.classList.toggle('hidden-card', !(matchSearch && matchFilter));
+            
+            // Auto-expand if search finds keyword in chips
+            if (q && chips.some(c => c.includes(q))) {
+                card.classList.add('expanded');
+            }
+        });
+    }
+
+    function setFilter(type, btn) {
+        currentFilter = type;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterCards();
+    }
+
+    // ── KEYBOARD SHORTCUT ──────────────────────────────
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('searchInput').focus();
+        }
+        if (e.key === 'Escape') closeAddModal();
+    });
+</script>
 </body>
 </html>

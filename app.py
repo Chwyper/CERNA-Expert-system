@@ -93,9 +93,21 @@ def api_chat():
                 "Tentu, silakan curhat. Aku ada di sini untuk mendengarkan dan membantu menganalisis kondisimu. Mulai dari mana nih?"
             ]
             return jsonify({"status": "fallback", "balasan": random.choice(balasan_list), "hasil": None})
+        
+        # Deteksi "sinyal selesai": User mengatakan sudah tidak ada keluhan lain
+        # Jika ada gejala di memori, langsung lanjut ke diagnosa akhir tanpa balik loop
+        kata_selesai = [
+            "tidak", "enggak", "nggak", "gak", "ngga", "sudah", "sudah segitu",
+            "cukup", "segitu", "tidak ada", "enggak ada", "nggak ada", "gak ada",
+            "itu aja", "itu saja", "hanya itu", "sekian", "selesai", "habis", "yaudah"
+        ]
+        is_selesai = any(pesan.strip().startswith(k) or pesan.strip() == k for k in kata_selesai)
+        
+        if is_selesai and "gejala_terkumpul" in session and session["gejala_terkumpul"]:
+            # Paksa lanjut ke tahap diagnosa dengan gejala yang sudah dikumpulkan
+            pass  # Jangan return, biarkan kode di bawah menangani diagnosa
             
-        # Fallback biasa jika tidak ada gejala tertangkap dan memori sesi kosong
-        if "gejala_terkumpul" in session and session["gejala_terkumpul"]:
+        elif "gejala_terkumpul" in session and session["gejala_terkumpul"]:
             return jsonify({
                 "status": "fallback",
                 "balasan": "Oke, aku catat. Silakan lanjutkan ceritamu, apakah ada keluhan lain yang menyertai?", 
@@ -107,6 +119,7 @@ def api_chat():
                 "balasan": "Maaf, aku belum menangkap secara spesifik gejalanya. Bisa ceritakan lebih detail apa yang kamu rasakan secara fisik atau emosional?", 
                 "hasil": None
             })
+
             
     # Menggabungkan gejala baru dengan memori sesi sebelumnya
     gejala_terkumpul = session.get("gejala_terkumpul", {})
@@ -419,7 +432,24 @@ def admin_kata_kunci():
     # Ambil semua kata kunci dan daftar gejala untuk form dropdown
     kata_kunci_list = KataKunci.query.join(Gejala).order_by(Gejala.kode, KataKunci.kata).all()
     gejala_list = Gejala.query.order_by(Gejala.kode).all()
-    return render_template("admin_kata_kunci.html", kata_kunci_list=kata_kunci_list, gejala_list=gejala_list)
+    
+    # Kelompokkan kata kunci berdasarkan gejala untuk tampilan UI accordion
+    from collections import OrderedDict
+    grouped = OrderedDict()
+    for kw in kata_kunci_list:
+        g_kode = kw.gejala.kode
+        if g_kode not in grouped:
+            grouped[g_kode] = {
+                "kode": g_kode,
+                "nama": kw.gejala.nama,
+                "kata_kunci": []
+            }
+        grouped[g_kode]["kata_kunci"].append(kw)
+    
+    return render_template("admin_kata_kunci.html", 
+                           grouped=grouped, 
+                           kata_kunci_list=kata_kunci_list, 
+                           gejala_list=gejala_list)
 
 @app.route("/admin/kata_kunci/add", methods=["POST"])
 @admin_required
